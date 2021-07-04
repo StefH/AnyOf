@@ -1,5 +1,5 @@
 # AnyOf
-Use the AnyOf&lt;TFirst, TSecond, ...> type to handle multiple defined types as input parameters for methods.
+Use the `AnyOf<First, TSecond, ...>` type to handle multiple defined types as input parameters for methods.
 
 This project uses code generation to generate multiple AnyOf-types:
 
