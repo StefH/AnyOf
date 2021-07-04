@@ -1,6 +1,16 @@
 # AnyOf
 Use the AnyOf&lt;T1, T2, ...> type to handle multiple defined types as input parameters for methods.
 
+# Install
+[![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)
+
+You can install from NuGet using the following command in the package manager window:
+`Install-Package AnyOf`
+
+Or via the Visual Studio NuGet package manager.
+If you use the `dotnet` command:
+`dotnet add package AnyOf`
+
 # Usage
 ``` c#
 using System;
