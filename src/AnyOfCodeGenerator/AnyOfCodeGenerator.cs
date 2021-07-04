@@ -71,7 +71,7 @@ namespace AnyOfGenerator
         private static void BuildTxClass(GeneratorExecutionContext? context, int numberOfTypes)
         {
             var typeNames = GetTypeNames(numberOfTypes);
-            var typesAsString = string.Join(", ", typeNames.Select(t=> $"T{t}"));
+            var typesAsString = string.Join(", ", typeNames.Select(t => $"T{t}"));
 
             var src = new StringBuilder();
             src.AppendLine("using System;");
