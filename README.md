@@ -32,9 +32,9 @@ namespace ConsoleAppConsumer
         {
             X(42);
             X("test");
-            Console.WriteLine(new string('-', 50));
         }
 
+        // This method accepts only an int and a string.
         private static void X(AnyOf<int, string> value)
         {
             Console.WriteLine("ToString " + value.ToString());
