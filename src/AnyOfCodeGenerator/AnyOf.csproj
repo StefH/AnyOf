@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>0.0.3</Version>
+    <Version>0.0.5</Version>
     <Authors>Stef Heyenrath</Authors>
     <Title>AnyOf</Title>
-    <Description>Use the AnyOf&lt;T1, T2, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
+    <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
     <PackageTags>AnyOf;types</PackageTags>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>

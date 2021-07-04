@@ -9,7 +9,7 @@ namespace AnyOfGenerator
     [Generator]
     public class AnyOfCodeGenerator : ISourceGenerator
     {
-        private const int Max = 3;
+        private const int Max = 5;
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -169,7 +169,7 @@ namespace AnyOfGenerator
             }
             else
             {
-                context?.AddSource($"AnyOf_{string.Join("_", typeNames)}_Generated", SourceText.From(code, Encoding.UTF8));
+                context?.AddSource($"AnyOf_{numberOfTypes}_Generated", SourceText.From(code, Encoding.UTF8));
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿namespace AnyOfGenerator
+﻿using System;
+
+namespace AnyOfGenerator
 {
     internal static class IntExtensions
     {
@@ -17,9 +19,12 @@
 
                 case 4:
                     return "Fourth";
+
+                case 5:
+                    return "Fifth";
             }
 
-            return string.Empty;
+            throw new NotSupportedException();
         }
     }
 }
