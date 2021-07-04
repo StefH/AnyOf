@@ -9,7 +9,7 @@ namespace AnyOfGenerator
     [Generator]
     public class AnyOfCodeGenerator : ISourceGenerator
     {
-        private const int Max = 5;
+        private const int Max = 10;
 
         public void Initialize(GeneratorInitializationContext context)
         {

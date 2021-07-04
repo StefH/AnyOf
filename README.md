@@ -1,12 +1,12 @@
 # AnyOf
 Use the `AnyOf<First, TSecond, ...>` type to handle multiple defined types as input parameters for methods.
 
-This project uses code generation to generate multiple AnyOf-types:
+This project uses code generation to generate up to 10 AnyOf-types:
 
 - `AnyOf<TFirst, TSecond>`
 - `AnyOf<TFirst, TSecond, TThird>`
 - `AnyOf<TFirst, TSecond, TThird, TFourth>`
-- `AnyOf<TFirst, TSecond, TThird, TFourth, TFifth>`
+- ...
 
 # Install
 [![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)

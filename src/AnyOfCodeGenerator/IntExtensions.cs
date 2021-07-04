@@ -22,6 +22,21 @@ namespace AnyOfGenerator
 
                 case 5:
                     return "Fifth";
+
+                case 6:
+                    return "Sixth";
+
+                case 7:
+                    return "Seventh";
+
+                case 8:
+                    return "Eighth";
+
+                case 9:
+                    return "Ninth";
+
+                case 10:
+                    return "Tenth";
             }
 
             throw new NotSupportedException();
