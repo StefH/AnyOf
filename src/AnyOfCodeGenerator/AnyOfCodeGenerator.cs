@@ -135,29 +135,29 @@ namespace AnyOfGenerator
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public AnyOfType CurrentType");
+            src.AppendLine("        public AnyOfType CurrentType");
             src.AppendLine("        {");
             src.AppendLine("            get");
             src.AppendLine("            {");
-            src.AppendLine($"               return _currentType;");
+            src.AppendLine("               return _currentType;");
             src.AppendLine("            }");
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public object CurrentValue");
+            src.AppendLine("        public object CurrentValue");
             src.AppendLine("        {");
             src.AppendLine("            get");
             src.AppendLine("            {");
-            src.AppendLine($"               return _currentValue;");
+            src.AppendLine("               return _currentValue;");
             src.AppendLine("            }");
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public Type CurrentValueType");
+            src.AppendLine("        public Type CurrentValueType");
             src.AppendLine("        {");
             src.AppendLine("            get");
             src.AppendLine("            {");
-            src.AppendLine($"               return _currentValueType;");
+            src.AppendLine("               return _currentValueType;");
             src.AppendLine("            }");
             src.AppendLine("        }");
             src.AppendLine();
