@@ -14,6 +14,7 @@ namespace ConsoleAppConsumer
         private static void X(AnyOf<int, string> value)
         {
             Console.WriteLine("ToString " + value.ToString());
+            Console.WriteLine("CurrentValue " + value.CurrentValue);
             Console.WriteLine("CurrentValueType " + value.CurrentValueType);
 
             Console.WriteLine("IsUndefined " + value.IsUndefined);
