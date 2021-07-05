@@ -81,10 +81,11 @@ namespace AnyOfGenerator
             src.AppendLine("namespace AnyOfTypes");
             src.AppendLine("{");
 
-            src.AppendLine("    [DebuggerDisplay(\"{ToString()}\")]");
+            src.AppendLine("    [DebuggerDisplay(\"AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
             src.AppendLine($"    public struct AnyOf<{typesAsString}>");
             src.AppendLine("    {");
 
+            src.AppendLine("        private readonly object _currentValue;");
             src.AppendLine("        private readonly Type _currentValueType;");
             src.AppendLine("        private readonly AnyOfType _currentType;");
             src.AppendLine();
@@ -107,6 +108,7 @@ namespace AnyOfGenerator
                 src.AppendLine($"        public AnyOf(T{t} value)");
                 src.AppendLine("        {");
                 src.AppendLine($"            _currentType = AnyOfType.{t};");
+                src.AppendLine($"            _currentValue = value;");
                 src.AppendLine($"            _currentValueType = typeof(T{t});");
                 src.AppendLine($"            _{t.ToLowerInvariant()} = value;");
                 Array.ForEach(typeNames.Except(new[] { t }).ToArray(), dt => src.AppendLine($"            _{dt.ToLowerInvariant()} = default;"));
@@ -133,28 +135,36 @@ namespace AnyOfGenerator
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public AnyOfType CurrentType");
+            src.AppendLine("        public AnyOfType CurrentType");
             src.AppendLine("        {");
             src.AppendLine("            get");
             src.AppendLine("            {");
-            src.AppendLine($"               return _currentType;");
+            src.AppendLine("               return _currentType;");
             src.AppendLine("            }");
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public Type CurrentValueType");
+            src.AppendLine("        public object CurrentValue");
             src.AppendLine("        {");
             src.AppendLine("            get");
             src.AppendLine("            {");
-            src.AppendLine($"               return _currentValueType;");
+            src.AppendLine("               return _currentValue;");
+            src.AppendLine("            }");
+            src.AppendLine("        }");
+            src.AppendLine();
+
+            src.AppendLine("        public Type CurrentValueType");
+            src.AppendLine("        {");
+            src.AppendLine("            get");
+            src.AppendLine("            {");
+            src.AppendLine("               return _currentValueType;");
             src.AppendLine("            }");
             src.AppendLine("        }");
             src.AppendLine();
 
             src.AppendLine("        public override string ToString()");
             src.AppendLine("        {");
-            src.AppendLine("            string description = IsUndefined ? string.Empty : $\" : {_currentValueType.Name}\";");
-            src.AppendLine("            return $\"{_currentType}{description}\";");
+            src.AppendLine("            return IsUndefined ? null : $\"{_currentValue}\";");
             src.AppendLine("        }");
 
             src.AppendLine("    }");
