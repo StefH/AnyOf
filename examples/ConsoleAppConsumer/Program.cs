@@ -66,9 +66,10 @@ namespace ConsoleAppConsumer
         private static void X(AnyOf<int, string> value)
         {
             Console.WriteLine("ToString " + value.ToString());
+            Console.WriteLine("CurrentValue " + value.CurrentValue);
             Console.WriteLine("IsUndefined " + value.IsUndefined);
             Console.WriteLine("IsFirst " + value.IsFirst);
-            Console.WriteLine("IsSecond " + value.IsSecond);
+            Console.WriteLine("IsSecond " + value.IsSecond);            
 
             switch (value.CurrentType)
             {
@@ -89,10 +90,11 @@ namespace ConsoleAppConsumer
         private static void X3(AnyOf<int, string, DateTime> value)
         {
             Console.WriteLine("ToString " + value.ToString());
+            Console.WriteLine("CurrentValue " + value.CurrentValue);
             Console.WriteLine("IsUndefined " + value.IsUndefined);
             Console.WriteLine("IsFirst " + value.IsFirst);
             Console.WriteLine("IsSecond " + value.IsSecond);
-            Console.WriteLine("IsSecond " + value.IsThird);
+            Console.WriteLine("IsThird " + value.IsThird);
 
             switch (value.CurrentType)
             {

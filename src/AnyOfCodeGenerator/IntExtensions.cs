@@ -4,39 +4,13 @@ namespace AnyOfGenerator
 {
     internal static class IntExtensions
     {
+        private static readonly string[] Order = new[] { "Zeroth", "First", "Second", "Third", "Fourth", "Fifth", "Sixth", "Seventh", "Eighth", "Ninth", "Tenth" };
+
         public static string Ordinalize(this int value)
         {
-            switch (value)
+            if (value < Order.Length)
             {
-                case 1:
-                    return "First";
-
-                case 2:
-                    return "Second";
-
-                case 3:
-                    return "Third";
-
-                case 4:
-                    return "Fourth";
-
-                case 5:
-                    return "Fifth";
-
-                case 6:
-                    return "Sixth";
-
-                case 7:
-                    return "Seventh";
-
-                case 8:
-                    return "Eighth";
-
-                case 9:
-                    return "Ninth";
-
-                case 10:
-                    return "Tenth";
+                return Order[value];
             }
 
             throw new NotSupportedException();
