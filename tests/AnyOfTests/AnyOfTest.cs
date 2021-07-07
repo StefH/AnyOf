@@ -30,14 +30,20 @@ namespace AnyOfTests
             var anyOfIntAndStringValue1 = new AnyOf<int, string>(42);
             var anyOfIntAndStringValue2 = new AnyOf<int, string>(42);
             var anyOfIntAndStringValue3 = new AnyOf<int, string>(5);
+            var anyOfIntAndStringValue4 = new AnyOf<int, string>("x");
             var anyOfIntAndBoolValue = new AnyOf<int, bool>(42);
             var normalInt = 42;
+            var normalString = "x";
 
             // Assert
             (anyOfIntAndStringValue1 == anyOfIntAndStringValue2).Should().BeTrue();
             (anyOfIntAndStringValue1 == anyOfIntAndStringValue3).Should().BeFalse();
+            (anyOfIntAndStringValue1 == anyOfIntAndStringValue4).Should().BeFalse();
             (anyOfIntAndStringValue1 == anyOfIntAndBoolValue).Should().BeFalse();
             (anyOfIntAndStringValue1 == normalInt).Should().BeFalse();
+            (anyOfIntAndStringValue1 == normalString).Should().BeFalse();
+            (normalInt == anyOfIntAndStringValue1).Should().BeTrue();
+            (normalString == anyOfIntAndStringValue4).Should().BeTrue();
         }
     }
 }
