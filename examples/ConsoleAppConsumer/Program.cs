@@ -9,22 +9,44 @@ namespace ConsoleAppConsumer
     {
         private static void Main(string[] args)
         {
-            E(42);
-            E("test");
-            Console.WriteLine(new string('-', 50));
+            //E(42);
+            //E("test");
+            //Console.WriteLine(new string('-', 50));
 
-            Y(42);
-            Y("test");
-            Console.WriteLine(new string('-', 50));
+            //Y(42);
+            //Y("test");
+            //Console.WriteLine(new string('-', 50));
 
-            X(42);
+            var xInt1 = X(42);
+            var hc = xInt1.GetHashCode();
+
+            var xInt2 = X(42);
+            var xInt3 = X(5);
+
+            if (xInt1 == xInt2)
+            {
+                Console.WriteLine("---> xInt1 == xInt2");
+            }
+            if (xInt1 != xInt3)
+            {
+                Console.WriteLine("---> xInt1 != xInt3");
+            }
+            if (xInt1.Equals(xInt2))
+            {
+                Console.WriteLine("---> xInt1 Equals xInt2");
+            }
+            if (!xInt1.Equals(xInt3))
+            {
+                Console.WriteLine("---> xInt1 !Equals xInt3");
+            }
+
             X("test");
             Console.WriteLine(new string('-', 50));
 
-            X3(42);
-            X3("test");
-            X3(DateTime.Now);
-            Console.WriteLine(new string('-', 50));
+            //X3(42);
+            //X3("test");
+            //X3(DateTime.Now);
+            //Console.WriteLine(new string('-', 50));
         }
 
         private static void E(Either<int, string> value)
@@ -63,7 +85,7 @@ namespace ConsoleAppConsumer
             }
         }
 
-        private static void X(AnyOf<int, string> value)
+        private static AnyOf<int, string> X(AnyOf<int, string> value)
         {
             Console.WriteLine("ToString " + value.ToString());
             Console.WriteLine("CurrentValue " + value.CurrentValue);
@@ -75,15 +97,14 @@ namespace ConsoleAppConsumer
             {
                 case AnyOfType.First:
                     Console.WriteLine("AnyOfType = First with value " + value.First);
-                    break;
+                    return value;
 
                 case AnyOfType.Second:
                     Console.WriteLine("AnyOfType = Second with value " + value.Second);
-                    break;
+                    return value;
 
                 default:
-                    Console.WriteLine("????");
-                    break;
+                    throw new Exception("???");
             }
         }
 

@@ -76,6 +76,7 @@ namespace AnyOfGenerator
             var src = new StringBuilder();
             src.AppendLine("using System;");
             src.AppendLine("using System.Diagnostics;");
+            src.AppendLine("using System.Collections.Generic;");
             src.AppendLine();
 
             src.AppendLine("namespace AnyOfTypes");
@@ -85,6 +86,7 @@ namespace AnyOfGenerator
             src.AppendLine($"    public struct AnyOf<{typesAsString}>");
             src.AppendLine("    {");
 
+            src.AppendLine("        private readonly int _numberOfTypes;");
             src.AppendLine("        private readonly object _currentValue;");
             src.AppendLine("        private readonly Type _currentValueType;");
             src.AppendLine("        private readonly AnyOfType _currentType;");
@@ -107,6 +109,7 @@ namespace AnyOfGenerator
 
                 src.AppendLine($"        public AnyOf(T{t} value)");
                 src.AppendLine("        {");
+                src.AppendLine($"            _numberOfTypes = {numberOfTypes};");
                 src.AppendLine($"            _currentType = AnyOfType.{t};");
                 src.AppendLine($"            _currentValue = value;");
                 src.AppendLine($"            _currentValueType = typeof(T{t});");
@@ -135,30 +138,46 @@ namespace AnyOfGenerator
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine("        public AnyOfType CurrentType");
+            AddProperty(src, "AnyOfType", "CurrentType", "_currentType");
+
+            AddProperty(src, "object", "CurrentValue", "_currentValue");
+
+            AddProperty(src, "Type", "CurrentValueType", "_currentValueType");
+
+            src.AppendLine("        public override int GetHashCode()");
             src.AppendLine("        {");
-            src.AppendLine("            get");
-            src.AppendLine("            {");
-            src.AppendLine("               return _currentType;");
-            src.AppendLine("            }");
+            src.AppendLine("            var hash = new HashCode();");
+            src.AppendLine("            hash.Add(_currentValue);");
+            src.AppendLine("            hash.Add(_currentType);");
+            Array.ForEach(typeNames, t => src.AppendLine($"                        hash.Add(_{t.ToLowerInvariant()});"));
+            src.AppendLine("            return hash.ToHashCode();");
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine("        public object CurrentValue");
+            src.AppendLine($"        private bool Equals(AnyOf<{typesAsString}> other)");
             src.AppendLine("        {");
-            src.AppendLine("            get");
-            src.AppendLine("            {");
-            src.AppendLine("               return _currentValue;");
-            src.AppendLine("            }");
+            src.AppendLine("            return _currentType == other._currentType &&");
+            src.AppendLine("                   _numberOfTypes == other._numberOfTypes &&");
+            src.AppendLine("                   EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&");
+            Array.ForEach(typeNames, t => src.AppendLine($"            EqualityComparer<T{t}>.Default.Equals(_{t.ToLowerInvariant()}, other._{t.ToLowerInvariant()}){(t == typeNames.Last() ? ";" : " &&")}"));
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine("        public Type CurrentValueType");
+            src.AppendLine($"        public static bool operator ==(AnyOf<{typesAsString}> obj1, object obj2)");
             src.AppendLine("        {");
-            src.AppendLine("            get");
-            src.AppendLine("            {");
-            src.AppendLine("               return _currentValueType;");
-            src.AppendLine("            }");
+            src.AppendLine($"            return obj1 is AnyOf<{typesAsString}> o && obj1.Equals(obj2);");
+            src.AppendLine("        }");
+            src.AppendLine();
+
+            src.AppendLine($"        public static bool operator !=(AnyOf<{typesAsString}> obj1, object obj2)");
+            src.AppendLine("        {");
+            src.AppendLine($"            return !(obj1 is AnyOf<{typesAsString}> o && obj1.Equals(obj2));");
+            src.AppendLine("        }");
+            src.AppendLine();
+
+            src.AppendLine("        public override bool Equals(object obj)");
+            src.AppendLine("        {");
+            src.AppendLine($"            return obj is AnyOf<{typesAsString}> o && Equals(o);");
             src.AppendLine("        }");
             src.AppendLine();
 
@@ -181,6 +200,18 @@ namespace AnyOfGenerator
             {
                 context?.AddSource($"AnyOf_{numberOfTypes}_Generated", SourceText.From(code, Encoding.UTF8));
             }
+        }
+
+        private static void AddProperty(StringBuilder src, string type, string name, string privateField)
+        {
+            src.AppendLine($"        public {type} {name}");
+            src.AppendLine("        {");
+            src.AppendLine("            get");
+            src.AppendLine("            {");
+            src.AppendLine($"               return {privateField};");
+            src.AppendLine("            }");
+            src.AppendLine("        }");
+            src.AppendLine();
         }
     }
 }

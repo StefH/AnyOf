@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using AnyOfExampleGenerator;
 
@@ -82,6 +83,19 @@ namespace Union
             {
                 throw new InvalidOperationException($"Attempting to get {desiredType} when {currType} is set");
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Either<TP, TA> either &&
+                   currType == either.currType &&
+                   EqualityComparer<TP>.Default.Equals(primary, either.primary) &&
+                   EqualityComparer<TA>.Default.Equals(alternate, either.alternate);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(currType, primary, alternate);
         }
     }
 }
