@@ -14,12 +14,12 @@ namespace AnyOfTests
             var anyOfIntAndStringTypeWithIntValue1 = new AnyOf<int, string>(42);
             var anyOfIntAndStringTypeWithIntValue2 = new AnyOf<int, string>(42);
             var anyOfIntAndStringTypeWithIntValue3 = new AnyOf<int, string>(5);
-            var anyOfIntAnBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
+            var anyOfIntAndBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
 
             // Assert
             anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().Be(anyOfIntAndStringTypeWithIntValue2.GetHashCode());
             anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().NotBe(anyOfIntAndStringTypeWithIntValue3.GetHashCode());
-            anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().NotBe(anyOfIntAnBoolTypeWithBoolValue.GetHashCode());
+            anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().NotBe(anyOfIntAndBoolTypeWithBoolValue.GetHashCode());
         }
 
         [Fact]
@@ -29,13 +29,13 @@ namespace AnyOfTests
             var anyOfIntAndStringTypeWithIntValue1 = new AnyOf<int, string>(42);
             var anyOfIntAndStringTypeWithIntValue2 = new AnyOf<int, string>(42);
             var anyOfIntAndStringTypeWithIntValue3 = new AnyOf<int, string>(5);
-            var anyOfIntAnBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
+            var anyOfIntAndBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
             var normalInt = 42;
 
             // Assert
             anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue2).Should().BeTrue();
             anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue3).Should().BeFalse();
-            anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAnBoolTypeWithBoolValue).Should().BeFalse();
+            anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndBoolTypeWithBoolValue).Should().BeFalse();
             anyOfIntAndStringTypeWithIntValue1.Equals(normalInt).Should().BeFalse();
         }
 
