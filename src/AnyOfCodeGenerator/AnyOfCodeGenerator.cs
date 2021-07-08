@@ -163,15 +163,15 @@ namespace AnyOfGenerator
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public static bool operator ==(AnyOf<{typesAsString}> obj1, object obj2)");
+            src.AppendLine($"        public static bool operator ==(AnyOf<{typesAsString}> obj1, AnyOf<{typesAsString}> obj2)");
             src.AppendLine("        {");
-            src.AppendLine($"            return obj1 is AnyOf<{typesAsString}> o && obj1.Equals(obj2);");
+            src.AppendLine($"            return obj1.Equals(obj2);");
             src.AppendLine("        }");
             src.AppendLine();
 
-            src.AppendLine($"        public static bool operator !=(AnyOf<{typesAsString}> obj1, object obj2)");
+            src.AppendLine($"        public static bool operator !=(AnyOf<{typesAsString}> obj1, AnyOf<{typesAsString}> obj2)");
             src.AppendLine("        {");
-            src.AppendLine($"            return !(obj1 is AnyOf<{typesAsString}> o && obj1.Equals(obj2));");
+            src.AppendLine($"            return !obj1.Equals(obj2);");
             src.AppendLine("        }");
             src.AppendLine();
 
