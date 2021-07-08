@@ -150,6 +150,7 @@ namespace AnyOfGenerator
             src.AppendLine("            hash.Add(_currentValue);");
             src.AppendLine("            hash.Add(_currentType);");
             Array.ForEach(typeNames, t => src.AppendLine($"                        hash.Add(_{t.ToLowerInvariant()});"));
+            Array.ForEach(typeNames, t => src.AppendLine($"                        hash.Add(typeof(T{t}));"));
             src.AppendLine("            return hash.ToHashCode();");
             src.AppendLine("        }");
             src.AppendLine();

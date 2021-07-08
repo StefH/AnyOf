@@ -8,20 +8,35 @@ namespace AnyOfTests
     public class AnyOfTest
     {
         [Fact]
+        public void AnyOf_GetHashCode()
+        {
+            // Arrange
+            var anyOfIntAndStringTypeWithIntValue1 = new AnyOf<int, string>(42);
+            var anyOfIntAndStringTypeWithIntValue2 = new AnyOf<int, string>(42);
+            var anyOfIntAndStringTypeWithIntValue3 = new AnyOf<int, string>(5);
+            var anyOfIntAnBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
+
+            // Assert
+            anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().Be(anyOfIntAndStringTypeWithIntValue2.GetHashCode());
+            anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().NotBe(anyOfIntAndStringTypeWithIntValue3.GetHashCode());
+            anyOfIntAndStringTypeWithIntValue1.GetHashCode().Should().NotBe(anyOfIntAnBoolTypeWithBoolValue.GetHashCode());
+        }
+
+        [Fact]
         public void AnyOf_Equals_Method()
         {
             // Arrange
-            var anyOfIntAndStringValue1 = new AnyOf<int, string>(42);
-            var anyOfIntAndStringValue2 = new AnyOf<int, string>(42);
-            var anyOfIntAndStringValue3 = new AnyOf<int, string>(5);
-            var anyOfIntAndBoolValue = new AnyOf<int, bool>(42);
+            var anyOfIntAndStringTypeWithIntValue1 = new AnyOf<int, string>(42);
+            var anyOfIntAndStringTypeWithIntValue2 = new AnyOf<int, string>(42);
+            var anyOfIntAndStringTypeWithIntValue3 = new AnyOf<int, string>(5);
+            var anyOfIntAnBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
             var normalInt = 42;
 
             // Assert
-            anyOfIntAndStringValue1.Equals(anyOfIntAndStringValue2).Should().BeTrue();
-            anyOfIntAndStringValue1.Equals(anyOfIntAndStringValue3).Should().BeFalse();
-            anyOfIntAndStringValue1.Equals(anyOfIntAndBoolValue).Should().BeFalse();
-            anyOfIntAndStringValue1.Equals(normalInt).Should().BeFalse();
+            anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue2).Should().BeTrue();
+            anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue3).Should().BeFalse();
+            anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAnBoolTypeWithBoolValue).Should().BeFalse();
+            anyOfIntAndStringTypeWithIntValue1.Equals(normalInt).Should().BeFalse();
         }
 
         [Fact]
