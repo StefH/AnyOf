@@ -30,8 +30,21 @@ namespace ConsoleAppConsumer
     {
         private static void Main(string[] args)
         {
+            Console.WriteLine(ReturnSomething().CurrentValue);
+
             X(42);
             X("test");
+        }
+
+        // This method returns an string, int or bool in a random way.
+        private static AnyOf<string, int, bool> ReturnSomething()
+        {
+            return new Random().Next(3) switch
+            {
+                1 => "test",
+                2 => 42,
+                _ => true,
+            };
         }
 
         // This method accepts only an int and a string.

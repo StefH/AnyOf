@@ -1,7 +1,5 @@
 ﻿using System;
-using AnyOfExampleGenerator;
 using AnyOfTypes;
-using Union;
 
 namespace ConsoleAppConsumer
 {
@@ -9,13 +7,8 @@ namespace ConsoleAppConsumer
     {
         private static void Main(string[] args)
         {
-            //E(42);
-            //E("test");
-            //Console.WriteLine(new string('-', 50));
-
-            //Y(42);
-            //Y("test");
-            //Console.WriteLine(new string('-', 50));
+            Console.WriteLine(ReturnSomething().CurrentValue);
+            Console.WriteLine(new string('-', 50));
 
             var xInt1 = X(42);
             var hc = xInt1.GetHashCode();
@@ -43,46 +36,20 @@ namespace ConsoleAppConsumer
             X("test");
             Console.WriteLine(new string('-', 50));
 
-            //X3(42);
-            //X3("test");
-            //X3(DateTime.Now);
-            //Console.WriteLine(new string('-', 50));
+            X3(42);
+            X3("test");
+            X3(DateTime.Now);
+            Console.WriteLine(new string('-', 50));
         }
 
-        private static void E(Either<int, string> value)
+        private static AnyOf<string, int, bool> ReturnSomething()
         {
-            switch (value.CurrentType)
+            return new Random().Next(3) switch
             {
-                case CurrType.Primary:
-                    Console.WriteLine("Primary with value " + value.Primary);
-                    break;
-
-                case CurrType.Alternate:
-                    Console.WriteLine("Alternate with value " + value.Alternate);
-                    break;
-
-                default:
-                    Console.WriteLine("????");
-                    break;
-            }
-        }
-
-        private static void Y(AnyOfExample<int, string> value)
-        {
-            switch (value.CurrentType)
-            {
-                case AnyOfTypeExample.T1:
-                    Console.WriteLine("AnyOfType = T1 with value " + value.T1Property);
-                    break;
-
-                case AnyOfTypeExample.T2:
-                    Console.WriteLine("AnyOfType = T2 with value " + value.T2Property);
-                    break;
-
-                default:
-                    Console.WriteLine("????");
-                    break;
-            }
+                1 => "test",
+                2 => 42,
+                _ => true,
+            };
         }
 
         private static AnyOf<int, string> X(AnyOf<int, string> value)
@@ -91,7 +58,7 @@ namespace ConsoleAppConsumer
             Console.WriteLine("CurrentValue " + value.CurrentValue);
             Console.WriteLine("IsUndefined " + value.IsUndefined);
             Console.WriteLine("IsFirst " + value.IsFirst);
-            Console.WriteLine("IsSecond " + value.IsSecond);            
+            Console.WriteLine("IsSecond " + value.IsSecond);
 
             switch (value.CurrentType)
             {
