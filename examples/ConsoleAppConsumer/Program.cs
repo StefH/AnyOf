@@ -7,6 +7,7 @@ namespace ConsoleAppConsumer
     {
         private static void Main(string[] args)
         {
+            var hash = new HashCode();
             Console.WriteLine(ReturnSomething().CurrentValue);
             Console.WriteLine(new string('-', 50));
 
