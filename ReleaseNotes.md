@@ -1,3 +1,6 @@
+# 0.0.13 (25 July 2021)
+- [#3](https://github.com/StefH/AnyOf/pull/3) - Add HashCode dependency [bug] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.12 (08 July 2021)
 - [#2](https://github.com/StefH/AnyOf/pull/2) - GetHashCode and Equals [enhancement] contributed by [StefH](https://github.com/StefH)
 
