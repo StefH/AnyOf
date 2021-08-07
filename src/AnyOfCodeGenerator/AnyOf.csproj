@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>0.0.13</Version>
+    <Version>0.0.14</Version>
     <Authors>Stef Heyenrath</Authors>
     <Title>AnyOf</Title>
+    <LangVersion>9</LangVersion>
     <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
     <PackageTags>AnyOf;types</PackageTags>
 
@@ -32,6 +33,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.10.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.10.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="3.10.0" PrivateAssets="all"/>
   </ItemGroup>
 
   <ItemGroup>
