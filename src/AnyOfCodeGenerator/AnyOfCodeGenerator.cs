@@ -4,14 +4,13 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.VisualBasic;
 
 namespace AnyOfGenerator
 {
     [Generator]
     public class AnyOfCodeGenerator : ISourceGenerator
     {
-        private const int Max = 10;
+        private const int Max = 3;
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -22,17 +21,19 @@ namespace AnyOfGenerator
         {
             bool supportsNullable = context.ParseOptions switch
             {
-                CSharpParseOptions csharpParseOptions => csharpParseOptions.LanguageVersion >= Microsoft.CodeAnalysis.CSharp.LanguageVersion.CSharp8,
+                CSharpParseOptions csharpParseOptions => csharpParseOptions.LanguageVersion >= LanguageVersion.CSharp8,
 
-                VisualBasicParseOptions visualBasicParseOptions => visualBasicParseOptions.LanguageVersion >= Microsoft.CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16,// TODO is this correct ?
+                // VisualBasicParseOptions visualBasicParseOptions => visualBasicParseOptions.LanguageVersion >= Microsoft.CodeAnalysis.VisualBasic.LanguageVersion.VisualBasic16,
 
-                _ => throw new NotSupportedException("Only C# and VisualBasic is supported."),
+                _ => throw new NotSupportedException("Only C# is supported."),
             };
+
+            bool nullableEnabled = context.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
 
             Generate(context, supportsNullable);
         }
 
-        public void Test(bool supportsNullable = true)
+        public void Test(bool supportsNullable = true, bool nullableEnabled = true)
         {
             Generate(null, supportsNullable);
         }
@@ -101,6 +102,9 @@ namespace AnyOfGenerator
             var typeNames = GetTypeNames(numberOfTypes);
             var typesAsString = string.Join(", ", typeNames.Select(t => $"T{t}"));
 
+            var nullable = supportsNullable ? "?" : string.Empty;
+            var @default = supportsNullable ? "!" : string.Empty;
+
             var sb = new StringBuilder();
             sb.Append(AddHeader());
 
@@ -121,7 +125,7 @@ namespace AnyOfGenerator
             sb.AppendLine("    {");
 
             sb.AppendLine("        private readonly int _numberOfTypes;");
-            sb.AppendLine("        private readonly object _currentValue;");
+            sb.AppendLine($"        private readonly object{nullable} _currentValue;");
             sb.AppendLine("        private readonly Type _currentValueType;");
             sb.AppendLine("        private readonly AnyOfType _currentType;");
             sb.AppendLine();
@@ -148,7 +152,7 @@ namespace AnyOfGenerator
                 sb.AppendLine($"            _currentValue = value;");
                 sb.AppendLine($"            _currentValueType = typeof(T{t});");
                 sb.AppendLine($"            _{t.ToLowerInvariant()} = value;");
-                Array.ForEach(typeNames.Except(new[] { t }).ToArray(), dt => sb.AppendLine($"            _{dt.ToLowerInvariant()} = default;"));
+                Array.ForEach(typeNames.Except(new[] { t }).ToArray(), dt => sb.AppendLine($"            _{dt.ToLowerInvariant()} = default{@default};"));
                 sb.AppendLine("        }");
                 sb.AppendLine();
 
@@ -174,7 +178,7 @@ namespace AnyOfGenerator
 
             AddProperty(sb, "AnyOfType", "CurrentType", "_currentType");
 
-            AddProperty(sb, "object", "CurrentValue", "_currentValue");
+            AddProperty(sb, $"object{nullable}", "CurrentValue", "_currentValue");
 
             AddProperty(sb, "Type", "CurrentValueType", "_currentValueType");
 
@@ -210,13 +214,13 @@ namespace AnyOfGenerator
             sb.AppendLine("        }");
             sb.AppendLine();
 
-            sb.AppendLine("        public override bool Equals(object obj)");
+            sb.AppendLine($"        public override bool Equals(object{nullable} obj)");
             sb.AppendLine("        {");
             sb.AppendLine($"            return obj is AnyOf<{typesAsString}> o && Equals(o);");
             sb.AppendLine("        }");
             sb.AppendLine();
 
-            sb.AppendLine("        public override string ToString()");
+            sb.AppendLine($"        public override string{nullable} ToString()");
             sb.AppendLine("        {");
             sb.AppendLine("            return IsUndefined ? null : $\"{_currentValue}\";");
             sb.AppendLine("        }");
