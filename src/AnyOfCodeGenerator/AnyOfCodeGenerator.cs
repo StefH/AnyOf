@@ -10,7 +10,7 @@ namespace AnyOfGenerator
     [Generator]
     public class AnyOfCodeGenerator : ISourceGenerator
     {
-        private const int Max = 3;
+        private const int Max = 10;
 
         public void Initialize(GeneratorInitializationContext context)
         {
@@ -197,7 +197,7 @@ namespace AnyOfGenerator
             sb.AppendLine("        {");
             sb.AppendLine("            return _currentType == other._currentType &&");
             sb.AppendLine("                   _numberOfTypes == other._numberOfTypes &&");
-            sb.AppendLine("                   EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&");
+            sb.AppendLine($"                   EqualityComparer<object{nullable}>.Default.Equals(_currentValue, other._currentValue) &&");
             Array.ForEach(typeNames, t => sb.AppendLine($"            EqualityComparer<T{t}>.Default.Equals(_{t.ToLowerInvariant()}, other._{t.ToLowerInvariant()}){(t == typeNames.Last() ? ";" : " &&")}"));
             sb.AppendLine("        }");
             sb.AppendLine();
