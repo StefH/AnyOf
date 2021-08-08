@@ -1,3 +1,6 @@
+# 0.0.16 (08 August 2021)
+- [#6](https://github.com/StefH/AnyOf/pull/6) - Fix EqualityComparer code [bug] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.15 (07 August 2021)
 - [#5](https://github.com/StefH/AnyOf/pull/5) - Fix nullable [bug] contributed by [StefH](https://github.com/StefH)
 
