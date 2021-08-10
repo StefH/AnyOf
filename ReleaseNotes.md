@@ -1,3 +1,6 @@
+# 0.0.17 (10 August 2021)
+- [#7](https://github.com/StefH/AnyOf/pull/7) - Add DevelopmentDependency = true to csproj [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.16 (08 August 2021)
 - [#6](https://github.com/StefH/AnyOf/pull/6) - Fix EqualityComparer code [bug] contributed by [StefH](https://github.com/StefH)
 
