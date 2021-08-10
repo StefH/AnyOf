@@ -19,17 +19,6 @@ Or via the Visual Studio NuGet package manager or if you use the `dotnet` comman
 
 `dotnet add package AnyOf`
 
-#### :pencil2: Using in a Library project
-When you use this Source Generator as a package reference in your library project, make sure that you define this NuGet package as a Private Asset (`<PrivateAssets>`) and define the correct `<IncludeAssets>`. This is needed to indicate that this dependency is purely used as a development dependency and that you don’t want to expose that to projects that will consume your package.
-
-``` xml
-<PackageReference Include="AnyOf" Version="0.0.16">
-    <!-- 👇 -->
-    <PrivateAssets>all</PrivateAssets>
-    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-</PackageReference>
-```
-
 # Usage
 ``` c#
 using System;
