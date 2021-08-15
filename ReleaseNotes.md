@@ -1,3 +1,6 @@
+# 0.0.18 (15 August 2021)
+- [#8](https://github.com/StefH/AnyOf/pull/8) - Split into two projects (AnyOf and AnyOf.CodeGenerator) [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.17 (10 August 2021)
 - [#7](https://github.com/StefH/AnyOf/pull/7) - Add DevelopmentDependency = true to csproj [enhancement] contributed by [StefH](https://github.com/StefH)
 

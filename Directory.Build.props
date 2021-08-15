@@ -4,14 +4,14 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.0.17</Version>
+    <Version>0.0.18</Version>
     <Authors>Stef Heyenrath</Authors>
     <LangVersion>9</LangVersion>
     <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
     <PackageTags>AnyOf;types</PackageTags>
 
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReleaseNotes>See ReleaseNotes.md</PackageReleaseNotes>
+    <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../PackageReleaseNotes.txt"))</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/StefH/AnyOf</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/StefH/AnyOf</RepositoryUrl>

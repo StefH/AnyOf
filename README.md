@@ -9,15 +9,11 @@ This project uses code generation to generate up to 10 AnyOf-types:
 - ...
 
 # Install
+## The Source Generator version:
+[![NuGet Badge](https://buildstats.info/nuget/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
+
+## The normal version:
 [![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)
-
-You can install from NuGet using the following command in the package manager window:
-
-`Install-Package AnyOf`
-
-Or via the Visual Studio NuGet package manager or if you use the `dotnet` command:
-
-`dotnet add package AnyOf`
 
 # Usage
 ``` c#

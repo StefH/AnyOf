@@ -1,0 +1,4 @@
+# 0.0.18 (15 August 2021)
+- #8 Split into two projects (AnyOf and AnyOf.CodeGenerator) [enhancement]
+
+The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md
