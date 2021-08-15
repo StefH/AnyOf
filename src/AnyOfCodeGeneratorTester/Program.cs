@@ -1,4 +1,5 @@
-﻿using AnyOfGenerator;
+﻿using AnyOf.SourceGenerator;
+using AnyOfGenerator;
 
 namespace AnyOfCodeGeneratorTester
 {
@@ -8,7 +9,7 @@ namespace AnyOfCodeGeneratorTester
         {
             var c = new AnyOfCodeGenerator();
 
-            c.Test();
+            c.Generate(OutputType.File);
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using AnyOf.SourceGenerator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Text;
@@ -30,15 +31,15 @@ namespace AnyOfGenerator
 
             bool nullableEnabled = context.Compilation.Options.NullableContextOptions != NullableContextOptions.Disable;
 
-            Generate(context, supportsNullable);
+            Generate(OutputType.Context, context, supportsNullable);
         }
 
-        public void Test(bool supportsNullable = true, bool nullableEnabled = true)
+        public void Generate(OutputType output, bool supportsNullable = true)
         {
-            Generate(null, supportsNullable);
+            Generate(output, null, supportsNullable);
         }
 
-        private static void Generate(GeneratorExecutionContext? context, bool supportsNullable)
+        private static void Generate(OutputType output, GeneratorExecutionContext? context, bool supportsNullable)
         {
             BuildEnum(context);
 
