@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AnyOfCodeGenerator\AnyOf.csproj" />
+    <ProjectReference Include="..\AnyOfCodeGenerator\AnyOf.SourceGenerator.csproj" />
   </ItemGroup>
 
 </Project>
