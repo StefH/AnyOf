@@ -7,9 +7,14 @@ namespace AnyOfCodeGeneratorTester
     {
         static void Main(string[] args)
         {
-            var c = new AnyOfCodeGenerator();
+            var generator = new AnyOfCodeGenerator();
 
-            c.Generate(OutputType.File);
+            generator.Generate(new OutputOptions
+            {
+                Type = OutputType.File,
+                SupportsNullable= false,
+                Folder = "../../../../AnyOf"
+            });
         }
     }
 }

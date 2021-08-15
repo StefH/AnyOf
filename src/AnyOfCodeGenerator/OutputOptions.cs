@@ -4,6 +4,8 @@
     {
         public OutputType Type { get; set; } = OutputType.Context;
 
-        public string Path {  get; set; }
+        public bool SupportsNullable { get; set; } = true;
+
+        public string Folder { get; set; }
     }
 }

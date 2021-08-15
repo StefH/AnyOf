@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0B71158B-576
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{38805E90-A955-4097-97DC-537F7A0CD773}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf.SourceGenerator", "src\AnyOfCodeGenerator\AnyOf.SourceGenerator.csproj", "{12344228-91F4-4502-9595-39584E5A1234}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf.SourceGenerator", "src\AnyOfCodeGenerator\AnyOf.SourceGenerator.csproj", "{12354228-91F4-4502-9595-39584E5A1234}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppConsumer", "examples\ConsoleAppConsumer\ConsoleAppConsumer.csproj", "{B9DEFB42-EB14-4F73-B467-9C39B75F48CE}"
 EndProject
@@ -32,6 +32,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleAppConsumerNET472", "examples\ConsoleAppConsumerNET472\ConsoleAppConsumerNET472.csproj", "{96FAF87C-DD5F-435C-A78D-2DFC9860E135}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub Actions", "GitHub Actions", "{64C27029-B96B-48C4-90C2-848DD1D768BA}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\CreateRelease.yml = .github\workflows\CreateRelease.yml
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf", "src\AnyOf\AnyOf.csproj", "{32A113EF-DA46-4016-AA14-F3DC6ACDC20E}"
 EndProject
@@ -41,10 +44,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{12344228-91F4-4502-9595-39584E5A1234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12344228-91F4-4502-9595-39584E5A1234}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12344228-91F4-4502-9595-39584E5A1234}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12344228-91F4-4502-9595-39584E5A1234}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12354228-91F4-4502-9595-39584E5A1234}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12354228-91F4-4502-9595-39584E5A1234}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12354228-91F4-4502-9595-39584E5A1234}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12354228-91F4-4502-9595-39584E5A1234}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9DEFB42-EB14-4F73-B467-9C39B75F48CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9DEFB42-EB14-4F73-B467-9C39B75F48CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9DEFB42-EB14-4F73-B467-9C39B75F48CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -78,7 +81,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{12344228-91F4-4502-9595-39584E5A1234} = {0B71158B-576B-4498-9D40-141D554D1272}
+		{12354228-91F4-4502-9595-39584E5A1234} = {0B71158B-576B-4498-9D40-141D554D1272}
 		{B9DEFB42-EB14-4F73-B467-9C39B75F48CE} = {38805E90-A955-4097-97DC-537F7A0CD773}
 		{E29216D6-4ACE-4F08-BCB6-AE0584F5A7D7} = {38805E90-A955-4097-97DC-537F7A0CD773}
 		{CBE25FF6-ACDA-45A0-9B34-29F979063ECB} = {BDD6F175-13B7-48A1-BFFF-9ABAFF34A10D}
