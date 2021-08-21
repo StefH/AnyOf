@@ -1,11 +1,10 @@
-﻿using System;
-using AnyOfTypes;
+﻿using AnyOfTypes;
 
-namespace ClassLibrary
+namespace ClassLibrary1
 {
     public class Class1
     {
-        public AnyOf<int?, bool> X(AnyOf<string?, int> value)
+        public AnyOf<int?, bool> X1(AnyOf<string?, int> value)
         {
             if (value.IsFirst)
             {

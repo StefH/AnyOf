@@ -3,9 +3,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AnyOf" Version="0.0.18" />
+    <ProjectReference Include="..\ClassLibrary2\ClassLibrary2.csproj" />
+    <ProjectReference Include="..\ClassLibrary\ClassLibrary1.csproj" />
   </ItemGroup>
 
 </Project>
