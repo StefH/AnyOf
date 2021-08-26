@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.0.18</Version>
+    <Version>0.0.19</Version>
     <Authors>Stef Heyenrath</Authors>
     <LangVersion>9</LangVersion>
     <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
