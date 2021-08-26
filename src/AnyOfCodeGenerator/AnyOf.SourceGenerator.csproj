@@ -4,6 +4,8 @@
     <Title>AnyOf.SourceGenerator</Title>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ProjectGuid>{12354228-91F4-4502-9595-39584E5A1234}</ProjectGuid>
+
+    <DevelopmentDependency>true</DevelopmentDependency>
   </PropertyGroup>
 
   <ItemGroup>
