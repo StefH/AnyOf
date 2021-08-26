@@ -1,4 +1,4 @@
-# 0.0.18 (15 August 2021)
-- #8 Split into two projects (AnyOf and AnyOf.CodeGenerator) [enhancement]
+# 0.0.19 (26 August 2021)
+- #9 Set DevelopmentDependency to true [bug]
 
 The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md

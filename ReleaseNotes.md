@@ -1,3 +1,6 @@
+# 0.0.19 (26 August 2021)
+- [#9](https://github.com/StefH/AnyOf/pull/9) - Set DevelopmentDependency to true [bug] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.18 (15 August 2021)
 - [#8](https://github.com/StefH/AnyOf/pull/8) - Split into two projects (AnyOf and AnyOf.CodeGenerator) [enhancement] contributed by [StefH](https://github.com/StefH)
 
