@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.0.19</Version>
+    <Version>0.0.20</Version>
     <Authors>Stef Heyenrath</Authors>
     <LangVersion>9</LangVersion>
     <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
@@ -20,14 +20,4 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-
-  <Choose>
-    <!-- The environment variable `Prerelease` is set in the azure-pipelines.yml file. -->
-    <When Condition=" '$(Prerelease)' != '' ">
-      <PropertyGroup>
-        <!-- Set the version to x.x.x.x-{Prerelease}-1{Build_BuildId} (this is same buildId as defined in the azure-pipelines.yml file). -->
-        <VersionSuffix>$(Prerelease)-1$(BUILD_BUILDID)</VersionSuffix>
-      </PropertyGroup>
-    </When>
-  </Choose>
 </Project>

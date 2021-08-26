@@ -4,10 +4,6 @@
     <Title>AnyOf</Title>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <ProjectGuid>{32A113EF-DA46-4016-AA14-F3DC6ACDC20E}</ProjectGuid>
-
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">

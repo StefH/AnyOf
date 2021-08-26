@@ -1,3 +1,5 @@
+# 0.0.20 (26 August 2021)
+
 # 0.0.19 (26 August 2021)
 - [#9](https://github.com/StefH/AnyOf/pull/9) - Set DevelopmentDependency to true [bug] contributed by [StefH](https://github.com/StefH)
 
