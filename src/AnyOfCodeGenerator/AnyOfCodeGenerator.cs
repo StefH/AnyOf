@@ -182,8 +182,8 @@ namespace AnyOfGenerator
             sb.AppendLine("            var hash = new HashCode();");
             sb.AppendLine("            hash.Add(_currentValue);");
             sb.AppendLine("            hash.Add(_currentType);");
-            Array.ForEach(typeNames, t => sb.AppendLine($"                        hash.Add(_{t.ToLowerInvariant()});"));
-            Array.ForEach(typeNames, t => sb.AppendLine($"                        hash.Add(typeof(T{t}));"));
+            Array.ForEach(typeNames, t => sb.AppendLine($"            hash.Add(_{t.ToLowerInvariant()});"));
+            Array.ForEach(typeNames, t => sb.AppendLine($"            hash.Add(typeof(T{t}));"));
             sb.AppendLine("            return hash.ToHashCode();");
             sb.AppendLine("        }");
             sb.AppendLine();

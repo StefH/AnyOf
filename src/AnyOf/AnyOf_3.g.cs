@@ -139,12 +139,12 @@ namespace AnyOfTypes
             var hash = new HashCode();
             hash.Add(_currentValue);
             hash.Add(_currentType);
-                        hash.Add(_first);
-                        hash.Add(_second);
-                        hash.Add(_third);
-                        hash.Add(typeof(TFirst));
-                        hash.Add(typeof(TSecond));
-                        hash.Add(typeof(TThird));
+            hash.Add(_first);
+            hash.Add(_second);
+            hash.Add(_third);
+            hash.Add(typeof(TFirst));
+            hash.Add(typeof(TSecond));
+            hash.Add(typeof(TThird));
             return hash.ToHashCode();
         }
 

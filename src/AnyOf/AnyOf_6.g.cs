@@ -235,18 +235,18 @@ namespace AnyOfTypes
             var hash = new HashCode();
             hash.Add(_currentValue);
             hash.Add(_currentType);
-                        hash.Add(_first);
-                        hash.Add(_second);
-                        hash.Add(_third);
-                        hash.Add(_fourth);
-                        hash.Add(_fifth);
-                        hash.Add(_sixth);
-                        hash.Add(typeof(TFirst));
-                        hash.Add(typeof(TSecond));
-                        hash.Add(typeof(TThird));
-                        hash.Add(typeof(TFourth));
-                        hash.Add(typeof(TFifth));
-                        hash.Add(typeof(TSixth));
+            hash.Add(_first);
+            hash.Add(_second);
+            hash.Add(_third);
+            hash.Add(_fourth);
+            hash.Add(_fifth);
+            hash.Add(_sixth);
+            hash.Add(typeof(TFirst));
+            hash.Add(typeof(TSecond));
+            hash.Add(typeof(TThird));
+            hash.Add(typeof(TFourth));
+            hash.Add(typeof(TFifth));
+            hash.Add(typeof(TSixth));
             return hash.ToHashCode();
         }
 

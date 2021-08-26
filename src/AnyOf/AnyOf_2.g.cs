@@ -111,10 +111,10 @@ namespace AnyOfTypes
             var hash = new HashCode();
             hash.Add(_currentValue);
             hash.Add(_currentType);
-                        hash.Add(_first);
-                        hash.Add(_second);
-                        hash.Add(typeof(TFirst));
-                        hash.Add(typeof(TSecond));
+            hash.Add(_first);
+            hash.Add(_second);
+            hash.Add(typeof(TFirst));
+            hash.Add(typeof(TSecond));
             return hash.ToHashCode();
         }
 
