@@ -176,6 +176,8 @@ namespace AnyOfGenerator
             Array.ForEach(typeNames, t => sb.AppendLine($"        private readonly T{t} _{t.ToLowerInvariant()};"));
             sb.AppendLine();
 
+            sb.AppendLine($"        public AnyOfType[] AnyOfTypes => new [] {{ {string.Join(", ", typeNames.Select(t => $"AnyOfType.{t}"))} }};");
+
             sb.AppendLine("        public bool IsUndefined => _currentType == AnyOfType.Undefined;");
             Array.ForEach(typeNames, t => sb.AppendLine($"        public bool Is{t} => _currentType == AnyOfType.{t};"));
             sb.AppendLine();

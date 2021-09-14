@@ -25,6 +25,7 @@ namespace AnyOfTypes
         private readonly TSecond _second;
         private readonly TThird _third;
 
+        public AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;

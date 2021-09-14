@@ -32,6 +32,7 @@ namespace AnyOfTypes
         private readonly TNinth _ninth;
         private readonly TTenth _tenth;
 
+        public AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third, AnyOfType.Fourth, AnyOfType.Fifth, AnyOfType.Sixth, AnyOfType.Seventh, AnyOfType.Eighth, AnyOfType.Ninth, AnyOfType.Tenth };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
