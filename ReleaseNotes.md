@@ -1,3 +1,6 @@
+# 0.0.21 (14 September 2021)
+- [#10](https://github.com/StefH/AnyOf/pull/10) - Implement own HashCodeCalculator [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.20 (26 August 2021)
 
 # 0.0.19 (26 August 2021)
