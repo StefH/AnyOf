@@ -198,20 +198,23 @@ namespace AnyOfTypes
 
         public override int GetHashCode()
         {
-            var hash = new HashCode();
-            hash.Add(_currentValue);
-            hash.Add(_currentType);
-            hash.Add(_first);
-            hash.Add(_second);
-            hash.Add(_third);
-            hash.Add(_fourth);
-            hash.Add(_fifth);
-            hash.Add(typeof(TFirst));
-            hash.Add(typeof(TSecond));
-            hash.Add(typeof(TThird));
-            hash.Add(typeof(TFourth));
-            hash.Add(typeof(TFifth));
-            return hash.ToHashCode();
+            var fields = new object[]
+            {
+                _numberOfTypes,
+                _currentValue,
+                _currentType,
+                _first,
+                _second,
+                _third,
+                _fourth,
+                _fifth,
+                typeof(TFirst),
+                typeof(TSecond),
+                typeof(TThird),
+                typeof(TFourth),
+                typeof(TFifth),
+            };
+            return HashCodeCalculator.GetHashCode(fields);
         }
 
         private bool Equals(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth> other)

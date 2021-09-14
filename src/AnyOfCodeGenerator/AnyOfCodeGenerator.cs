@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using AnyOf.SourceGenerator;
 using Microsoft.CodeAnalysis;
@@ -43,7 +42,8 @@ namespace AnyOfGenerator
 
         private static void Generate(OutputOptions options, GeneratorExecutionContext? context)
         {
-            BuildEnum(options, context);
+            BuildHashCodeCalculatorClass(options, context);
+            BuildAnyOfTypesEnumClass(options, context);
 
             for (int numberOfTypes = 2; numberOfTypes <= Max; numberOfTypes++)
             {
@@ -56,7 +56,55 @@ namespace AnyOfGenerator
             return Enumerable.Range(0, numberOfTypes).Select(idx => $"{(idx + 1).Ordinalize()}").ToArray();
         }
 
-        private static void BuildEnum(OutputOptions options, GeneratorExecutionContext? context)
+        private static void BuildHashCodeCalculatorClass(OutputOptions options, GeneratorExecutionContext? context)
+        {
+            const string filename = "HashCodeCalculator.g.cs";
+
+            var sb = new StringBuilder();
+            sb.Append(AddHeader());
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine("using System.Linq;");
+            sb.AppendLine();
+
+            sb.AppendLine("namespace AnyOfTypes");
+            sb.AppendLine("{");
+            sb.AppendLine("    // Code is based on https://github.com/Informatievlaanderen/hashcode-calculator");
+            var method = @"    internal static class HashCodeCalculator
+    {
+        public static int GetHashCode(IEnumerable<object> hashFieldValues)
+        {
+            const int offset = unchecked((int)2166136261);
+            const int prime = 16777619;
+    
+            static int HashCodeAggregator(int hashCode, object value) => value == null
+                ? (hashCode ^ 0) * prime
+                : (hashCode ^ value.GetHashCode()) * prime;
+    
+            return hashFieldValues.Aggregate(offset, HashCodeAggregator);
+        }
+    }";
+            sb.AppendLine(method);
+            sb.AppendLine("}");
+
+            string code = sb.ToString();
+
+            switch (options.Type)
+            {
+                case OutputType.Console:
+                    Console.WriteLine(code);
+                    break;
+
+                case OutputType.File:
+                    File.WriteAllText(Path.Combine(options.Folder, filename), code);
+                    break;
+
+                default:
+                    context?.AddSource(filename, SourceText.From(code, Encoding.UTF8));
+                    break;
+            }
+        }
+
+        private static void BuildAnyOfTypesEnumClass(OutputOptions options, GeneratorExecutionContext? context)
         {
             const string filename = "AnyOfTypes.g.cs";
             var typeNames = GetTypeNames(Max);
@@ -179,12 +227,15 @@ namespace AnyOfGenerator
 
             sb.AppendLine("        public override int GetHashCode()");
             sb.AppendLine("        {");
-            sb.AppendLine("            var hash = new HashCode();");
-            sb.AppendLine("            hash.Add(_currentValue);");
-            sb.AppendLine("            hash.Add(_currentType);");
-            Array.ForEach(typeNames, t => sb.AppendLine($"            hash.Add(_{t.ToLowerInvariant()});"));
-            Array.ForEach(typeNames, t => sb.AppendLine($"            hash.Add(typeof(T{t}));"));
-            sb.AppendLine("            return hash.ToHashCode();");
+            sb.AppendLine("            var fields = new object[]");
+            sb.AppendLine("            {");
+            sb.AppendLine("                _numberOfTypes,");
+            sb.AppendLine("                _currentValue,");
+            sb.AppendLine("                _currentType,");
+            Array.ForEach(typeNames, t => sb.AppendLine($"                _{t.ToLowerInvariant()},"));
+            Array.ForEach(typeNames, t => sb.AppendLine($"                typeof(T{t}),"));
+            sb.AppendLine("            };");
+            sb.AppendLine("            return HashCodeCalculator.GetHashCode(fields);");
             sb.AppendLine("        }");
             sb.AppendLine();
 

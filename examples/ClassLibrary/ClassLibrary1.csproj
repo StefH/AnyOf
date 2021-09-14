@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AnyOf.SourceGenerator" Version="0.0.18" />
+    <PackageReference Include="AnyOf.SourceGenerator" Version="0.0.20" />
   </ItemGroup>
 
 </Project>

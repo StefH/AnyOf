@@ -2,12 +2,8 @@
 
   <PropertyGroup>
     <Title>AnyOf</Title>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.0;netstandard2.0;netstandard2.1</TargetFrameworks>
     <ProjectGuid>{32A113EF-DA46-4016-AA14-F3DC6ACDC20E}</ProjectGuid>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="Microsoft.Bcl.HashCode" Version="1.1.1" />
-  </ItemGroup>
 
 </Project>

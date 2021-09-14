@@ -268,24 +268,27 @@ namespace AnyOfTypes
 
         public override int GetHashCode()
         {
-            var hash = new HashCode();
-            hash.Add(_currentValue);
-            hash.Add(_currentType);
-            hash.Add(_first);
-            hash.Add(_second);
-            hash.Add(_third);
-            hash.Add(_fourth);
-            hash.Add(_fifth);
-            hash.Add(_sixth);
-            hash.Add(_seventh);
-            hash.Add(typeof(TFirst));
-            hash.Add(typeof(TSecond));
-            hash.Add(typeof(TThird));
-            hash.Add(typeof(TFourth));
-            hash.Add(typeof(TFifth));
-            hash.Add(typeof(TSixth));
-            hash.Add(typeof(TSeventh));
-            return hash.ToHashCode();
+            var fields = new object[]
+            {
+                _numberOfTypes,
+                _currentValue,
+                _currentType,
+                _first,
+                _second,
+                _third,
+                _fourth,
+                _fifth,
+                _sixth,
+                _seventh,
+                typeof(TFirst),
+                typeof(TSecond),
+                typeof(TThird),
+                typeof(TFourth),
+                typeof(TFifth),
+                typeof(TSixth),
+                typeof(TSeventh),
+            };
+            return HashCodeCalculator.GetHashCode(fields);
         }
 
         private bool Equals(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> other)
