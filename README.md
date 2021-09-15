@@ -15,6 +15,10 @@ This project uses code generation to generate up to 10 AnyOf-types:
 ## The normal version:
 [![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)
 
+## AnyOf.Newtonsoft.Json
+This package can be used to serialize/deserialize an object which contains an AnyOf-type. 
+[![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf.Newtonsoft.Json)
+
 # Usage
 ``` c#
 using System;
