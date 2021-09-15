@@ -44,6 +44,7 @@ namespace AnyOfGenerator
         {
             BuildHashCodeCalculatorClass(options, context);
             BuildAnyOfTypesEnumClass(options, context);
+            // BuildBaseClass(options, context);
 
             for (int numberOfTypes = 2; numberOfTypes <= Max; numberOfTypes++)
             {
@@ -140,10 +141,69 @@ namespace AnyOfGenerator
             }
         }
 
+        private static void BuildBaseClass(OutputOptions options, GeneratorExecutionContext? context)
+        {
+            var nullable = options.SupportsNullable ? "?" : string.Empty;
+
+            var sb = new StringBuilder();
+            sb.Append(AddHeader());
+
+            if (options.SupportsNullable)
+            {
+                sb.AppendLine("#nullable enable");
+            }
+            sb.AppendLine("using System;");
+            sb.AppendLine("using System.Diagnostics;");
+            sb.AppendLine("using System.Collections.Generic;");
+            sb.AppendLine();
+
+            sb.AppendLine("namespace AnyOfTypes");
+            sb.AppendLine("{");
+
+            sb.AppendLine($"    public struct AnyOfBase");
+            sb.AppendLine("    {");
+
+            sb.AppendLine("        public virtual int NumberOfTypes { get; private set; }");
+            sb.AppendLine($"        private virtual object{nullable} _currentValue;");
+            sb.AppendLine("        private virtual readonly Type _currentValueType;");
+            sb.AppendLine("        private virtual readonly AnyOfType _currentType;");
+            sb.AppendLine();
+
+            AddProperty(sb, "AnyOfType", "CurrentType", "_currentType");
+
+            AddProperty(sb, $"object{nullable}", "CurrentValue", "_currentValue");
+
+            AddProperty(sb, "Type", "CurrentValueType", "_currentValueType");
+
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            if (options.SupportsNullable)
+            {
+                sb.AppendLine("#nullable disable");
+            }
+
+            var code = sb.ToString();
+            var filename = $"AnyOfBase.g.cs";
+            switch (options.Type)
+            {
+                case OutputType.Console:
+                    Console.WriteLine(code);
+                    break;
+                case OutputType.File:
+                    File.WriteAllText(Path.Combine(options.Folder, filename), code);
+                    break;
+                default:
+                    context?.AddSource(filename, SourceText.From(code, Encoding.UTF8));
+                    break;
+            }
+        }
+
         private static void BuildTxClass(OutputOptions options, GeneratorExecutionContext? context, int numberOfTypes)
         {
             var typeNames = GetTypeNames(numberOfTypes);
-            var typesAsString = string.Join(", ", typeNames.Select(t => $"T{t}"));
+            var genericTypesAsCommaSeparatedString = string.Join(", ", typeNames.Select(t => $"T{t}"));
+            var typesAsCommaSeparatedString = $"{string.Join(", ", typeNames.Select(t => $"typeof(T{t})"))}";
+            var thisType = $"AnyOf<{string.Join(", ", typeNames.Select(t => $"{{typeof(T{t}).Name}}"))}>";
 
             var nullable = options.SupportsNullable ? "?" : string.Empty;
             var @default = options.SupportsNullable ? "!" : string.Empty;
@@ -163,10 +223,11 @@ namespace AnyOfGenerator
             sb.AppendLine("namespace AnyOfTypes");
             sb.AppendLine("{");
 
-            sb.AppendLine("    [DebuggerDisplay(\"AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
-            sb.AppendLine($"    public struct AnyOf<{typesAsString}>");
+            sb.AppendLine("    [DebuggerDisplay(\"{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
+            sb.AppendLine($"    public struct AnyOf<{genericTypesAsCommaSeparatedString}>");
             sb.AppendLine("    {");
 
+            sb.AppendLine($"        private readonly string _thisType => $\"{thisType}\";");
             sb.AppendLine("        private readonly int _numberOfTypes;");
             sb.AppendLine($"        private readonly object{nullable} _currentValue;");
             sb.AppendLine("        private readonly Type _currentValueType;");
@@ -176,16 +237,20 @@ namespace AnyOfGenerator
             Array.ForEach(typeNames, t => sb.AppendLine($"        private readonly T{t} _{t.ToLowerInvariant()};"));
             sb.AppendLine();
 
+            sb.AppendLine($"        public readonly AnyOfType[] AnyOfTypes => new [] {{ {string.Join(", ", typeNames.Select(t => $"AnyOfType.{t}"))} }};");
+
+            sb.AppendLine($"        public readonly Type[] Types => new [] {{ {typesAsCommaSeparatedString} }};");
+
             sb.AppendLine("        public bool IsUndefined => _currentType == AnyOfType.Undefined;");
             Array.ForEach(typeNames, t => sb.AppendLine($"        public bool Is{t} => _currentType == AnyOfType.{t};"));
             sb.AppendLine();
 
             Array.ForEach(typeNames, t =>
             {
-                sb.AppendLine($"        public static implicit operator AnyOf<{typesAsString}>(T{t} value) => new AnyOf<{typesAsString}>(value);");
+                sb.AppendLine($"        public static implicit operator AnyOf<{genericTypesAsCommaSeparatedString}>(T{t} value) => new AnyOf<{genericTypesAsCommaSeparatedString}>(value);");
                 sb.AppendLine();
 
-                sb.AppendLine($"        public static implicit operator T{t}(AnyOf<{typesAsString}> @this) => @this.{t};");
+                sb.AppendLine($"        public static implicit operator T{t}(AnyOf<{genericTypesAsCommaSeparatedString}> @this) => @this.{t};");
                 sb.AppendLine();
 
                 sb.AppendLine($"        public AnyOf(T{t} value)");
@@ -239,7 +304,7 @@ namespace AnyOfGenerator
             sb.AppendLine("        }");
             sb.AppendLine();
 
-            sb.AppendLine($"        private bool Equals(AnyOf<{typesAsString}> other)");
+            sb.AppendLine($"        private bool Equals(AnyOf<{genericTypesAsCommaSeparatedString}> other)");
             sb.AppendLine("        {");
             sb.AppendLine("            return _currentType == other._currentType &&");
             sb.AppendLine("                   _numberOfTypes == other._numberOfTypes &&");
@@ -248,13 +313,13 @@ namespace AnyOfGenerator
             sb.AppendLine("        }");
             sb.AppendLine();
 
-            sb.AppendLine($"        public static bool operator ==(AnyOf<{typesAsString}> obj1, AnyOf<{typesAsString}> obj2)");
+            sb.AppendLine($"        public static bool operator ==(AnyOf<{genericTypesAsCommaSeparatedString}> obj1, AnyOf<{genericTypesAsCommaSeparatedString}> obj2)");
             sb.AppendLine("        {");
             sb.AppendLine($"            return obj1.Equals(obj2);");
             sb.AppendLine("        }");
             sb.AppendLine();
 
-            sb.AppendLine($"        public static bool operator !=(AnyOf<{typesAsString}> obj1, AnyOf<{typesAsString}> obj2)");
+            sb.AppendLine($"        public static bool operator !=(AnyOf<{genericTypesAsCommaSeparatedString}> obj1, AnyOf<{genericTypesAsCommaSeparatedString}> obj2)");
             sb.AppendLine("        {");
             sb.AppendLine($"            return !obj1.Equals(obj2);");
             sb.AppendLine("        }");
@@ -262,7 +327,7 @@ namespace AnyOfGenerator
 
             sb.AppendLine($"        public override bool Equals(object{nullable} obj)");
             sb.AppendLine("        {");
-            sb.AppendLine($"            return obj is AnyOf<{typesAsString}> o && Equals(o);");
+            sb.AppendLine($"            return obj is AnyOf<{genericTypesAsCommaSeparatedString}> o && Equals(o);");
             sb.AppendLine("        }");
             sb.AppendLine();
 
@@ -297,6 +362,15 @@ namespace AnyOfGenerator
 
         private static void AddProperty(StringBuilder src, string type, string name, string privateField)
         {
+            //src.AppendLine($"        public {type} {name}");
+            //src.AppendLine("        {");
+            //src.AppendLine("            get");
+            //src.AppendLine("            {");
+            //src.AppendLine($"               return {privateField};");
+            //src.AppendLine("            }");
+            //src.AppendLine("        }");
+            //src.AppendLine();
+
             src.AppendLine($"        public {type} {name}");
             src.AppendLine("        {");
             src.AppendLine("            get");
