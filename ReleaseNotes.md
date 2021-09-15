@@ -1,3 +1,6 @@
+# 0.0.23 (15 September 2021)
+- [#12](https://github.com/StefH/AnyOf/pull/12) - Add AnyOf.Newtonsoft.Json project [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.22 (15 September 2021)
 - [#11](https://github.com/StefH/AnyOf/pull/11) - Add Types and AnyOfTypes property to generated classes [enhancement] contributed by [StefH](https://github.com/StefH)
 
