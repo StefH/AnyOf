@@ -1,7 +1,8 @@
+# 0.0.22 (15 September 2021)
+- [#11](https://github.com/StefH/AnyOf/pull/11) - Add Types and AnyOfTypes property to generated classes [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.21 (14 September 2021)
 - [#10](https://github.com/StefH/AnyOf/pull/10) - Implement own HashCodeCalculator [enhancement] contributed by [StefH](https://github.com/StefH)
-
-# 0.0.20 (26 August 2021)
 
 # 0.0.19 (26 August 2021)
 - [#9](https://github.com/StefH/AnyOf/pull/9) - Set DevelopmentDependency to true [bug] contributed by [StefH](https://github.com/StefH)

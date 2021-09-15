@@ -1,4 +1,4 @@
-# 0.0.21 (14 September 2021)
-- #10 Implement own HashCodeCalculator [enhancement]
+# 0.0.22 (15 September 2021)
+- #11 Add Types and AnyOfTypes property to generated classes [enhancement]
 
 The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md
