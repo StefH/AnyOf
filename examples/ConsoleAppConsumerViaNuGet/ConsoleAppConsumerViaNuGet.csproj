@@ -3,9 +3,12 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AnyOf" Version="0.0.20" />
+    <ProjectReference Include="..\..\src\AnyOf\AnyOf.csproj" />
   </ItemGroup>
+
+  <!--<ItemGroup>
+    <PackageReference Include="AnyOf" Version="0.0.20" />
+  </ItemGroup>-->
 
 </Project>

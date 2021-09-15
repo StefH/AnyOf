@@ -13,9 +13,10 @@ using System.Collections.Generic;
 
 namespace AnyOfTypes
 {
-    [DebuggerDisplay("AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
+    [DebuggerDisplay("{thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
     public struct AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TEighth, TNinth, TTenth>
     {
+        private readonly string thisType => $"AnyOf<{typeof(TFirst)}, {typeof(TSecond)}, {typeof(TThird)}, {typeof(TFourth)}, {typeof(TFifth)}, {typeof(TSixth)}, {typeof(TSeventh)}, {typeof(TEighth)}, {typeof(TNinth)}, {typeof(TTenth)}>";
         private readonly int _numberOfTypes;
         private readonly object _currentValue;
         private readonly Type _currentValueType;
@@ -33,6 +34,7 @@ namespace AnyOfTypes
         private readonly TTenth _tenth;
 
         public AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third, AnyOfType.Fourth, AnyOfType.Fifth, AnyOfType.Sixth, AnyOfType.Seventh, AnyOfType.Eighth, AnyOfType.Ninth, AnyOfType.Tenth };
+        public Type[] Types => new [] { typeof(TFirst), typeof(TSecond), typeof(TThird), typeof(TFourth), typeof(TFifth), typeof(TSixth), typeof(TSeventh), typeof(TEighth), typeof(TNinth), typeof(TTenth) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;

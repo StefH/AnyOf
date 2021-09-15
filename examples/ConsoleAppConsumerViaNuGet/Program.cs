@@ -7,12 +7,16 @@ namespace ConsoleAppConsumer
     {
         private static void Main(string[] args)
         {
+            //object c = 1000;
+            //object cast = (AnyOf<int, string>) c;
+
             X(42);
             X("test");
         }
 
         private static void X(AnyOf<int, string> value)
         {
+            Console.WriteLine($"{value}");
             Console.WriteLine("ToString " + value.ToString());
             Console.WriteLine("CurrentValue " + value.CurrentValue);
             Console.WriteLine("CurrentValueType " + value.CurrentValueType);
