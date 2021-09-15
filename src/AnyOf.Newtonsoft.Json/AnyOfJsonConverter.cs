@@ -79,7 +79,6 @@ namespace RestEaseClientGeneratorConsoleApp
                     return jsonFieldName;
                 });
 
-
                 var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
 
                 // By intersecting the sets of names we determine the most suitable inheritor
