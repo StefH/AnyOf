@@ -16,7 +16,7 @@ namespace AnyOfTypes
     [DebuggerDisplay("{thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
     public struct AnyOf<TFirst, TSecond, TThird>
     {
-        private readonly string thisType => $"AnyOf<{typeof(TFirst)}, {typeof(TSecond)}, {typeof(TThird)}>";
+        private readonly string thisType => $"AnyOf<{typeof(TFirst).Name}, {typeof(TSecond).Name}, {typeof(TThird).Name}>";
         private readonly int _numberOfTypes;
         private readonly object _currentValue;
         private readonly Type _currentValueType;
@@ -26,8 +26,8 @@ namespace AnyOfTypes
         private readonly TSecond _second;
         private readonly TThird _third;
 
-        public AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third };
-        public Type[] Types => new [] { typeof(TFirst), typeof(TSecond), typeof(TThird) };
+        public readonly AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third };
+        public readonly Type[] Types => new [] { typeof(TFirst), typeof(TSecond), typeof(TThird) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
