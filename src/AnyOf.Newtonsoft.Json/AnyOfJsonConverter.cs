@@ -26,7 +26,9 @@ namespace RestEaseClientGeneratorConsoleApp
         }
 
         /// <summary>
-        /// See https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net/17247339#17247339
+        /// See
+        /// - https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net
+        /// - https://stackoverflow.com/a/59286262/255966
         /// </summary>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
