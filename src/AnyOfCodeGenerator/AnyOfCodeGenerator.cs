@@ -223,11 +223,11 @@ namespace AnyOfGenerator
             sb.AppendLine("namespace AnyOfTypes");
             sb.AppendLine("{");
 
-            sb.AppendLine("    [DebuggerDisplay(\"{thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
+            sb.AppendLine("    [DebuggerDisplay(\"{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
             sb.AppendLine($"    public struct AnyOf<{genericTypesAsCommaSeparatedString}>");
             sb.AppendLine("    {");
 
-            sb.AppendLine($"        private readonly string thisType => $\"{thisType}\";");
+            sb.AppendLine($"        private readonly string _thisType => $\"{thisType}\";");
             sb.AppendLine("        private readonly int _numberOfTypes;");
             sb.AppendLine($"        private readonly object{nullable} _currentValue;");
             sb.AppendLine("        private readonly Type _currentValueType;");
