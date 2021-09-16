@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RestEaseClientGeneratorConsoleApp
+namespace AnyOfTypes
 {
     public class AnyOfJsonConverter : JsonConverter
     {
