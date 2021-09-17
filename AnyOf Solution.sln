@@ -50,6 +50,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf.Newtonsoft.Json", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf.System.Text.Json", "src\AnyOf.System.Text.Json\AnyOf.System.Text.Json.csproj", "{41D0104F-3E63-4223-A4AD-372E68A6B0CB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnyOf.System.Text.Json.Tests", "tests\AnyOf.System.Text.Json.Tests\AnyOf.System.Text.Json.Tests.csproj", "{6969DE4A-26E0-4513-8CFD-47989356045F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -108,6 +110,10 @@ Global
 		{41D0104F-3E63-4223-A4AD-372E68A6B0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41D0104F-3E63-4223-A4AD-372E68A6B0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41D0104F-3E63-4223-A4AD-372E68A6B0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6969DE4A-26E0-4513-8CFD-47989356045F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6969DE4A-26E0-4513-8CFD-47989356045F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6969DE4A-26E0-4513-8CFD-47989356045F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6969DE4A-26E0-4513-8CFD-47989356045F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -127,6 +133,7 @@ Global
 		{C7307358-326A-42D2-889C-61D1DAE285D2} = {38805E90-A955-4097-97DC-537F7A0CD773}
 		{31D0104F-3E63-4223-A4AD-372E68A6B0CB} = {0B71158B-576B-4498-9D40-141D554D1272}
 		{41D0104F-3E63-4223-A4AD-372E68A6B0CB} = {0B71158B-576B-4498-9D40-141D554D1272}
+		{6969DE4A-26E0-4513-8CFD-47989356045F} = {BDD6F175-13B7-48A1-BFFF-9ABAFF34A10D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3586BB89-A981-4CD0-88DB-2DF513FE2B90}

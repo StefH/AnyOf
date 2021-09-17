@@ -14,14 +14,13 @@ namespace AnyOfTypes.System.Text.Json
     {
         public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            object? anyOfValue;
-            ReadJsonNode(ref reader, typeToConvert, options, out anyOfValue);
-            return anyOfValue;
+            _ = ReadJsonNode(ref reader, typeToConvert, options, out object? anyOfValue);
+            return Activator.CreateInstance(typeToConvert, anyOfValue);
         }
 
         private JsonNode ReadJsonNode(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options, out object? anyOfValue)
         {
-            anyOfValue = default;
+            anyOfValue = null;
 
             switch (reader.TokenType)
             {
@@ -47,12 +46,18 @@ namespace AnyOfTypes.System.Text.Json
 #else
                     var stringValue = Encoding.ASCII.GetString(reader.GetRawString());
 #endif
-                    return new JsonNumber(stringValue);
+                    var number = new JsonNumber(stringValue);
+
+                    anyOfValue = number.GetInt32();
+
+                    return number;
 
                 case JsonTokenType.True:
+                    anyOfValue = true;
                     return true;
 
                 case JsonTokenType.False:
+                    anyOfValue = false;
                     return false;
 
                 case JsonTokenType.Null:
@@ -143,13 +148,17 @@ namespace AnyOfTypes.System.Text.Json
 
             if (mostSuitableType != null)
             {
+                //var x = JsonObject.
+
+                
+
                 var mostSuitableTypeInstance = Activator.CreateInstance(mostSuitableType);
                 if (mostSuitableTypeInstance is null)
                 {
                     throw new JsonException($"Could not create instance of type {mostSuitableType}.");
                 }
 
-                return Activator.CreateInstance(typeToConvert, mostSuitableTypeInstance);
+                return mostSuitableTypeInstance;
             }
 
             throw new JsonException($"Could not deserialize {typeToConvert}, no suitable type found.");
