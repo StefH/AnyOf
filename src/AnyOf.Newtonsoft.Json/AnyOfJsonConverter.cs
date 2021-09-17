@@ -34,7 +34,7 @@ namespace AnyOfTypes.Newtonsoft.Json
         {
             var jObject = JObject.Load(reader);
 
-            Type mostSuitableType = null;
+            Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
 
             // Take the names of elements from json data
@@ -54,7 +54,6 @@ namespace AnyOfTypes.Newtonsoft.Json
                 // Get serializable property names
                 var jsonNameFields = notIgnoreProps.Select(prop =>
                 {
-                    string jsonFieldName = null;
                     var jsonPropertyAttribute = prop.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyAttribute));
                     if (jsonPropertyAttribute != null)
                     {
@@ -65,18 +64,13 @@ namespace AnyOfTypes.Newtonsoft.Json
                             var argument = jsonPropertyAttribute.ConstructorArguments.First();
                             if (argument.ArgumentType == typeof(string) && !string.IsNullOrEmpty(argument.Value as string))
                             {
-                                jsonFieldName = (string)argument.Value;
+                                return (string)argument.Value;
                             }
                         }
                     }
 
                     // Otherwise, take the name of the property
-                    if (string.IsNullOrEmpty(jsonFieldName))
-                    {
-                        jsonFieldName = prop.Name;
-                    }
-
-                    return jsonFieldName;
+                    return prop.Name;
                 });
 
                 var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
@@ -99,7 +93,7 @@ namespace AnyOfTypes.Newtonsoft.Json
 
             if (mostSuitableType != null)
             {
-                object target = Activator.CreateInstance(mostSuitableType);
+                var target = Activator.CreateInstance(mostSuitableType);
 
                 using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
                 {
