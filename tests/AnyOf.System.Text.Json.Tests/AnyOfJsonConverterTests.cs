@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json;
 using FluentAssertions;
 using Xunit;
@@ -19,6 +20,11 @@ namespace AnyOfTypes.System.Text.Json.Tests
         public class TestMixedTypes
         {
             public AnyOf<int, string, A, B> IntOrStringOrAOrB { get; set; }
+        }
+
+        public class TestComplexArray
+        {
+            public AnyOf<int[], List<string>, List<A>, IEnumerable<B>> X { get; set; }
         }
 
         public class A
@@ -101,6 +107,28 @@ namespace AnyOfTypes.System.Text.Json.Tests
         }
 
         [Fact]
+        public void Serialize_AnyOf_With_IntArray()
+        {
+            // Arrange
+            var test = new TestComplexArray
+            {
+                X = new int[] { 42 }
+            };
+
+            // Act
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = false
+            };
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var json = JsonSerializer.Serialize(test, options);
+
+            // Assert
+            json.Should().Be("{\"X\":[42]}");
+        }
+
+        [Fact]
         public void Deserialize_AnyOf_With_SimpleTypes()
         {
             // Arrange
@@ -152,6 +180,25 @@ namespace AnyOfTypes.System.Text.Json.Tests
             options.Converters.Add(new AnyOfJsonConverter());
 
             var result = JsonSerializer.Deserialize<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_IntArray()
+        {
+            // Arrange
+            var expected = new TestComplexArray
+            {
+                X = new int[] { 42 }
+            };
+
+            // Act
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
 
             // Assert
             result.Should().BeEquivalentTo(expected);
