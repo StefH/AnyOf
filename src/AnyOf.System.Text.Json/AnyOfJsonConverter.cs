@@ -13,18 +13,16 @@ namespace AnyOfTypes.System.Text.Json
     {
         public override object? Read(ref Utf8JsonReader reader, Type? typeToConvert, JsonSerializerOptions options)
         {
-            //(object? value, Type type) bestMatch;
+            object? value;
 
-            object? value = null;
+            var jsonElement = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
 
-            switch (reader.TokenType)
+            switch (jsonElement.ValueKind)
             {
-                case JsonTokenType.StartArray:
-                    //var jsonElementAsArray = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
+                case JsonValueKind.Array:
                     var list = new List<object?>();
 
-                    var array = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
-                    foreach (var arrayElement in array.EnumerateArray())
+                    foreach (var arrayElement in jsonElement.EnumerateArray())
                     {
                         if (arrayElement.ValueKind == JsonValueKind.Object)
                         {
@@ -38,61 +36,27 @@ namespace AnyOfTypes.System.Text.Json
                         list.Add(value);
                     }
 
-
-              
-
-                    //    reader.Read();
-
-                    value = list.Cast<int>().ToArray();
-
-                   // bestMatch = (bestMatch ?? false);
-
-
-                    //var array = new List<object?>();
-                    //foreach (var i in jsonElementAsArray.EnumerateArray())
-                    //{
-                    //    array.Add(Read(ref reader, null, options));
-                    //}
-                    break;
-
-                case JsonTokenType.StartObject:
-                    var jsonElement = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
-                    value = FindBestMatch(jsonElement, typeToConvert?? typeof(object), options);
-                    break;
-
-                //case JsonTokenType.StartArray:
-                //    return options.GetConverter<JsonNode>().Read(ref reader, typeToConvert, options);
-
-                case JsonTokenType.String:
-                    if (reader.TryGetDateTime(out var date))
+                    Type? listType = null;
+                    if (list.Any())
                     {
-                        value = date;
+                        listType = list.First()?.GetType();
                     }
-                    else
-                    {
-                        value = reader.GetString();
-                    }
-                    // bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
+
+                    listType ??= typeof(object);
+
+                    var arr = Array.CreateInstance(listType, list.Count());
+                    Array.Copy(list.ToArray(), arr, list.Count);
+
+                    value = arr; // list.Select(x => Convert.ChangeType(x, listType)).ToArray();
                     break;
 
-                case JsonTokenType.Number:
-                    value = ReadNumber(ref reader).value;
-                    break;
-
-                case JsonTokenType.True:
-                    value = true; // (true, typeof(bool));
-                    break;
-
-                case JsonTokenType.False:
-                    value = false; // (false, typeof(bool));
-                    break;
-
-                case JsonTokenType.Null:
-                    value = null; // (null, typeof(object));
+                case JsonValueKind.Object:
+                    value = FindBestMatch(jsonElement, typeToConvert ?? typeof(object), options);
                     break;
 
                 default:
-                    throw new JsonException($"The TokenType '{reader.TokenType}' cannot be deserialized.");
+                    value = GetNonObjectValue(jsonElement);
+                    break;
             }
 
             if (typeToConvert is null)
@@ -118,32 +82,40 @@ namespace AnyOfTypes.System.Text.Json
                     {
                         return date;
                     }
-                    else
-                    {
-                        return reader.GetString();
-                    }
-                    // bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
-                    //break;
+
+                    return reader.GetString();
 
                 case JsonValueKind.Number:
                     if (reader.TryGetInt32(out var i))
                     {
                         return i;
                     }
+
+                    if (reader.TryGetInt64(out var l))
+                    {
+                        return l;
+                    }
+
+                    if (reader.TryGetUInt32(out var ui))
+                    {
+                        return ui;
+                    }
+
+                    if (reader.TryGetUInt64(out var ul))
+                    {
+                        return ul;
+                    }
+
                     return reader.GetDecimal();
-                // break;
 
                 case JsonValueKind.True:
-                    return true; // (true, typeof(bool));
-                   // break;
+                    return true;
 
                 case JsonValueKind.False:
-                    return false; // (false, typeof(bool));
-                   // break;
+                    return false;
 
                 case JsonValueKind.Null:
-                    return null; // (null, typeof(object));
-                   // break;
+                    return null;
 
                 default:
                     throw new JsonException($"The ValueKind '{reader.ValueKind}' is not supported.");
@@ -179,14 +151,6 @@ namespace AnyOfTypes.System.Text.Json
         private object? FindBestMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
         {
             Type? mostSuitableType = null;
-
-            if (jsonElement.ValueKind == JsonValueKind.Array)
-            {
-                
-
-                int xxxxx = 0;
-            }
-
             int countOfMaxMatchingProperties = -1;
 
             // Take the names of elements from json data
