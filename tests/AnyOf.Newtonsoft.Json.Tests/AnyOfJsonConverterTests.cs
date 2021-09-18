@@ -1,8 +1,8 @@
-using System.Text.Json;
 using FluentAssertions;
+using Newtonsoft.Json;
 using Xunit;
 
-namespace AnyOfTypes.System.Text.Json.Tests
+namespace AnyOfTypes.Newtonsoft.Json.Tests
 {
     public class AnyOfJsonConverterTests
     {
@@ -41,13 +41,13 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions
+            var options = new JsonSerializerSettings
             {
-                WriteIndented = false
+                Formatting = Formatting.None
             };
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var json = JsonSerializer.Serialize(test, options);
+            var json = JsonConvert.SerializeObject(test, options);
 
             // Assert
             json.Should().Be("{\"IntOrString\":1}");
@@ -66,13 +66,13 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions
+            var options = new JsonSerializerSettings
             {
-                WriteIndented = false
+                Formatting = Formatting.None
             };
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var json = JsonSerializer.Serialize(test, options);
+            var json = JsonConvert.SerializeObject(test, options);
 
             // Assert
             json.Should().Be("{\"AorB\":{\"Id\":1}}");
@@ -88,13 +88,13 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions
+            var options = new JsonSerializerSettings
             {
-                WriteIndented = false
+                Formatting = Formatting.None
             };
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var json = JsonSerializer.Serialize(test, options);
+            var json = JsonConvert.SerializeObject(test, options);
 
             // Assert
             json.Should().Be("{\"IntOrStringOrAOrB\":1}");
@@ -110,10 +110,10 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerSettings();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1}", options);
+            var result = JsonConvert.DeserializeObject<TestSimpleTypes>("{\"IntOrString\":1}", options);
 
             // Assert
             result.Should().BeEquivalentTo(expected);
@@ -129,10 +129,10 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerSettings();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
+            var result = JsonConvert.DeserializeObject<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
 
             // Assert
             result.AorB.First.Should().BeEquivalentTo(expected);
@@ -148,10 +148,10 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerSettings();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);
+            var result = JsonConvert.DeserializeObject<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);
 
             // Assert
             result.Should().BeEquivalentTo(expected);

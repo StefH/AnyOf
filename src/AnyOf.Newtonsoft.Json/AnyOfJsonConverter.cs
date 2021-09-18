@@ -39,8 +39,53 @@ namespace AnyOfTypes.Newtonsoft.Json
         /// - https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net
         /// - https://stackoverflow.com/a/59286262/255966
         /// </summary>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return Activator.CreateInstance(objectType);
+            }
+
+            if (reader.TokenType != JsonToken.StartObject)
+            {
+                var jValue = new JValue(reader.Value);
+
+                object? value = null;
+                switch (reader.TokenType)
+                {
+                    case JsonToken.String:
+                        value = (string)jValue;
+                        break;
+
+                    case JsonToken.Date:
+                        value = (DateTime)jValue;
+                        break;
+
+                    case JsonToken.Boolean:
+                        value = (bool)jValue;
+                        break;
+
+                    case JsonToken.Integer:
+                        value = (int)jValue;
+                        break;
+
+                    case JsonToken.Float:
+                        value = (double)jValue;
+                        break;
+
+                    default:
+                        value = jValue.Value;
+                        break;
+                }
+
+                if (value is null)
+                {
+                    return existingValue;
+                }
+
+                return Activator.CreateInstance(objectType, value);
+            }
+
             var jObject = JObject.Load(reader);
 
             Type? mostSuitableType = null;
