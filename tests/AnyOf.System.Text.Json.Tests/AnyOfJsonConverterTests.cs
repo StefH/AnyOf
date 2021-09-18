@@ -110,11 +110,9 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
+            var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
+           // options.SetupExtensions();
 
             var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1}", options);
 
@@ -129,13 +127,11 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var expected = new A
             {
                 Id = 1
-            };            
+            };
 
             // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
+            var options = new JsonSerializerOptions();
+           // options.Converters.Add(new JsonNodeConverter());
             options.Converters.Add(new AnyOfJsonConverter());
 
             var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
@@ -154,10 +150,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
+            var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
             var result = JsonSerializer.Deserialize<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);

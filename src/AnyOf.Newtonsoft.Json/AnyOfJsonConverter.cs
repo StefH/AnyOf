@@ -21,7 +21,16 @@ namespace AnyOfTypes.Newtonsoft.Json
                 return;
             }
 
-            var currentValue = GetPropertyValue(value, "CurrentValue");
+            var currentValue = GetNullablePropertyValue(value, "CurrentValue");
+            if (currentValue == null)
+            {
+                if (serializer.NullValueHandling == NullValueHandling.Include)
+                {
+                    serializer.Serialize(writer, currentValue);
+                }
+                return;
+            }
+
             serializer.Serialize(writer, currentValue);
         }
 
@@ -103,7 +112,7 @@ namespace AnyOfTypes.Newtonsoft.Json
                 return Activator.CreateInstance(objectType, target);
             }
 
-            throw new SerializationException($"Could not deserialize {objectType}, no suitable type found.");
+            throw new SerializationException($"Could not deserialize '{objectType}', no suitable type found.");
         }
 
         public override bool CanConvert(Type objectType)
@@ -130,14 +139,27 @@ namespace AnyOfTypes.Newtonsoft.Json
             return jObjectReader;
         }
 
-        private static T GetPropertyValue<T>(object value, string name)
+        private static T GetPropertyValue<T>(object instance, string name)
         {
-            return (T)GetPropertyValue(value, name);
+            var value = GetNullablePropertyValue(instance, name);
+            if (value is null)
+            {
+                throw new JsonException($"The public property '{name}' has a null value.");
+            }
+
+            return (T)value;
         }
 
-        private static object GetPropertyValue(object value, string name)
+        private static object? GetNullablePropertyValue(object instance, string name)
         {
-            return value.GetType().GetProperty(name).GetValue(value);
+            var type = instance.GetType();
+            var propertyInfo = type.GetProperty(name);
+            if (propertyInfo is null)
+            {
+                throw new JsonException($"The type '{type}' does not contain public property '{name}'.");
+            }
+
+            return propertyInfo.GetValue(instance);
         }
     }
 }

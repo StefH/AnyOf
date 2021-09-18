@@ -1,132 +1,102 @@
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
-using Dahomey.Json.Serialization;
-using Dahomey.Json.Serialization.Converters;
-using Dahomey.Json.Util;
+using System.Text.Json.Serialization;
+using AnyOfTypes.System.Text.Json.Extensions;
 
 namespace AnyOfTypes.System.Text.Json
 {
-    public class AnyOfJsonConverter : BaseObjectConverter
+    public class AnyOfJsonConverter : JsonConverter<object?>
     {
         public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            _ = ReadJsonNode(ref reader, typeToConvert, options, out object? anyOfValue);
-            return Activator.CreateInstance(typeToConvert, anyOfValue);
-        }
-
-        private JsonNode ReadJsonNode(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options, out object? anyOfValue)
-        {
-            anyOfValue = null;
-
+            (object? value, Type type) bestMatch;
             switch (reader.TokenType)
             {
                 case JsonTokenType.StartObject:
-                    using (new DepthHandler(options))
-                    {
-                        anyOfValue = ReadObject(ref reader, typeToConvert, options);
-                        return false;
-                    }
+                    var jsonElement = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
+                    bestMatch = FindBestMatch(jsonElement, typeToConvert, options);
+                    break;
 
-                case JsonTokenType.StartArray:
-                    using (new DepthHandler(options))
-                    {
-                        return ReadArray(ref reader, options);
-                    }
+                //case JsonTokenType.StartArray:
+                //    return options.GetConverter<JsonNode>().Read(ref reader, typeToConvert, options);
 
                 case JsonTokenType.String:
-                    return reader.GetString();
+                    bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
+                    break;
 
                 case JsonTokenType.Number:
-#if NETSTANDARD2_0
-                    var stringValue = Encoding.ASCII.GetString(reader.GetRawString().ToArray());
-#else
-                    var stringValue = Encoding.ASCII.GetString(reader.GetRawString());
-#endif
-                    var number = new JsonNumber(stringValue);
-
-                    anyOfValue = number.GetInt32();
-
-                    return number;
+                    bestMatch = ReadNumber(ref reader);
+                    break;
 
                 case JsonTokenType.True:
-                    anyOfValue = true;
-                    return true;
+                    bestMatch = (true, typeof(bool));
+                    break;
 
                 case JsonTokenType.False:
-                    anyOfValue = false;
-                    return false;
+                    bestMatch = (false, typeof(bool));
+                    break;
 
                 case JsonTokenType.Null:
-                    return new JsonNull();
+                    bestMatch = (null, typeof(object));
+                    break;
 
                 default:
-                    throw new JsonException();
+                    throw new JsonException($"The TokenType '{reader.TokenType}' cannot be deserialized.");
             }
+
+            if (bestMatch.value is null)
+            {
+                return Activator.CreateInstance(typeToConvert);
+            }
+
+            return Activator.CreateInstance(typeToConvert, bestMatch.value);
         }
 
-        private JsonArray ReadArray(ref Utf8JsonReader reader, JsonSerializerOptions options)
+        private (object value, Type type) ReadNumber(ref Utf8JsonReader reader)
         {
-            var array = new JsonArray();
-
-            while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+            ReadOnlySpan<byte> buffer = reader.GetRawString();
+            if (Utf8Parser.TryParse(buffer, out int iValue, out int bytesConsumed) && bytesConsumed == buffer.Length)
             {
-                JsonNode node = ReadJsonNode(ref reader, typeof(JsonNode), options, out _);
-                array.Add(node);
+                return (iValue, typeof(int));
             }
 
-            return array;
+            if (Utf8Parser.TryParse(buffer, out long lValue, out bytesConsumed) && bytesConsumed == buffer.Length)
+            {
+                return (lValue, typeof(long));
+            }
+
+            if (Utf8Parser.TryParse(buffer, out ulong ulValue, out bytesConsumed) && bytesConsumed == buffer.Length)
+            {
+                return (ulValue, typeof(ulong));
+            }
+
+            if (Utf8Parser.TryParse(buffer, out double dblValue, out bytesConsumed) && bytesConsumed == buffer.Length)
+            {
+                return (dblValue, typeof(double));
+            }
+
+            throw new JsonException();
         }
 
-        private object? ReadObject(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        private (object? value, Type type) FindBestMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
         {
-            var obj = new JsonObject();
-
-            while (reader.Read() && reader.TokenType != JsonTokenType.EndObject)
-            {
-                if (reader.TokenType != JsonTokenType.PropertyName)
-                {
-                    throw new JsonException();
-                }
-
-                string? propertyName = reader.GetString();
-                if (propertyName == null)
-                {
-                    throw new JsonException("Property name cannot be null");
-                }
-
-                reader.Read();
-                JsonNode propertyValue = ReadJsonNode(ref reader, typeof(JsonNode), options, out _);
-
-                obj.Add(propertyName, propertyValue);
-            }
-
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
 
             // Take the names of elements from json data
-            var jObjectKeys = GetKeys(obj);
+            var jObjectKeys = jsonElement.EnumerateObject().Select(p => p.Name);
 
-            var existingValue = Activator.CreateInstance(typeToConvert);
-            if (existingValue is null)
-            {
-                throw new JsonException($"Could not create instance of type {typeToConvert}.");
-            }
-
-            // Trying to find the right "KnownType"
-            foreach (var knownType in GetPropertyValue<Type[]>(existingValue, "Types"))
+            foreach (var knownType in typeToConvert.GetGenericArguments())
             {
                 // Select properties
                 var notIgnoreProps = knownType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
                 // Get serializable property names
-                var jsonNameFields = notIgnoreProps.Select(prop =>
-                {
-                    return prop.Name;
-                });
+                var jsonNameFields = notIgnoreProps.Select(prop => prop.Name);
 
                 var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
 
@@ -148,20 +118,10 @@ namespace AnyOfTypes.System.Text.Json
 
             if (mostSuitableType != null)
             {
-                //var x = JsonObject.
-
-                
-
-                var mostSuitableTypeInstance = Activator.CreateInstance(mostSuitableType);
-                if (mostSuitableTypeInstance is null)
-                {
-                    throw new JsonException($"Could not create instance of type {mostSuitableType}.");
-                }
-
-                return mostSuitableTypeInstance;
+                return (ToObject(jsonElement, mostSuitableType, options), mostSuitableType);
             }
 
-            throw new JsonException($"Could not deserialize {typeToConvert}, no suitable type found.");
+            throw new JsonException($"Could not deserialize '{typeToConvert}', no suitable type found.");
         }
 
         public override void Write(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
@@ -190,13 +150,25 @@ namespace AnyOfTypes.System.Text.Json
                 return false;
             }
 
-            Console.WriteLine(objectType);
             return objectType.FullName.StartsWith("AnyOfTypes.AnyOf`");
         }
 
-        private HashSet<string> GetKeys(JsonObject obj)
+        /// <summary>
+        /// - https://stackoverflow.com/questions/58138793/system-text-json-jsonelement-toobject-workaround
+        /// - https://stackoverflow.com/a/58193164/255966
+        /// </summary>
+        private static object ToObject(JsonElement element, Type returnType, JsonSerializerOptions? options = null)
         {
-            return new HashSet<string>(((IEnumerable<KeyValuePair<string, JsonNode>>)obj).Select(k => k.Key));
+            var json = element.GetRawText();
+            return JsonSerializer.Deserialize(json, returnType, options);
+        }
+
+        /// <summary>
+        /// https://github.com/dahomey-technologies/Dahomey.Json/blob/master/src/Dahomey.Json/Util/Utf8JsonReaderExtensions.cs
+        /// </summary>
+        private static JsonConverter<T> GetConverter<T>(JsonSerializerOptions options)
+        {
+            return (JsonConverter<T>)options.GetConverter(typeof(T));
         }
 
         private static T GetPropertyValue<T>(object instance, string name)
