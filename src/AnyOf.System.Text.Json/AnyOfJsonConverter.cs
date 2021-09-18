@@ -22,27 +22,29 @@ namespace AnyOfTypes.System.Text.Json
                 case JsonTokenType.StartArray:
                     //var jsonElementAsArray = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
                     var list = new List<object?>();
-                    while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
-                    {
-                        var jsonElementXXX = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
 
-                        if (jsonElementXXX.ValueKind == JsonValueKind.Object)
+                    var array = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
+                    foreach (var arrayElement in array.EnumerateArray())
+                    {
+                        if (arrayElement.ValueKind == JsonValueKind.Object)
                         {
-                            value = FindBestMatch(jsonElementXXX, typeToConvert ?? typeof(object), options);
+                            value = FindBestMatch(arrayElement, typeToConvert ?? typeof(object), options);
                         }
                         else
                         {
-                            var single = Read(ref reader, null, options);
-                            value = Array.CreateInstance(single.GetType(), 1);
+                            value = GetNonObjectValue(arrayElement);
                         }
 
-                        break;
-                        //list.Add(Read(ref reader, null, options));
-                        //if (bestMatch is not null)
-                        //{
-                        //    break;
-                        //}
+                        list.Add(value);
                     }
+
+
+              
+
+                    //    reader.Read();
+
+                    value = list.Cast<int>().ToArray();
+
                    // bestMatch = (bestMatch ?? false);
 
 
@@ -106,9 +108,46 @@ namespace AnyOfTypes.System.Text.Json
             return Activator.CreateInstance(typeToConvert, value);
         }
 
-        private object? GetNonObjectValue()
+        private object? GetNonObjectValue(JsonElement reader)
         {
-            return 3;
+
+            switch (reader.ValueKind)
+            {
+                case JsonValueKind.String:
+                    if (reader.TryGetDateTime(out var date))
+                    {
+                        return date;
+                    }
+                    else
+                    {
+                        return reader.GetString();
+                    }
+                    // bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
+                    //break;
+
+                case JsonValueKind.Number:
+                    if (reader.TryGetInt32(out var i))
+                    {
+                        return i;
+                    }
+                    return reader.GetDecimal();
+                // break;
+
+                case JsonValueKind.True:
+                    return true; // (true, typeof(bool));
+                   // break;
+
+                case JsonValueKind.False:
+                    return false; // (false, typeof(bool));
+                   // break;
+
+                case JsonValueKind.Null:
+                    return null; // (null, typeof(object));
+                   // break;
+
+                default:
+                    throw new JsonException($"The ValueKind '{reader.ValueKind}' is not supported.");
+            }
         }
 
         private (object value, Type type) ReadNumber(ref Utf8JsonReader reader)

@@ -189,10 +189,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
         public void Deserialize_AnyOf_With_IntArray()
         {
             // Arrange
-            var expected = new TestComplexArray
-            {
-                X = new int[] { 42 }
-            };
+            var expected = new int[] { 42 };
 
             // Act
             var options = new JsonSerializerOptions();
@@ -201,7 +198,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
 
             // Assert
-            result.Should().BeEquivalentTo(expected);
+            result.X.First.Should().BeEquivalentTo(expected);
         }
     }
 }
