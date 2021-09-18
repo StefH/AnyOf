@@ -11,49 +11,104 @@ namespace AnyOfTypes.System.Text.Json
 {
     public class AnyOfJsonConverter : JsonConverter<object?>
     {
-        public override object? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override object? Read(ref Utf8JsonReader reader, Type? typeToConvert, JsonSerializerOptions options)
         {
-            (object? value, Type type) bestMatch;
+            //(object? value, Type type) bestMatch;
+
+            object? value = null;
+
             switch (reader.TokenType)
             {
+                case JsonTokenType.StartArray:
+                    //var jsonElementAsArray = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
+                    var list = new List<object?>();
+                    while (reader.Read() && reader.TokenType != JsonTokenType.EndArray)
+                    {
+                        var jsonElementXXX = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
+
+                        if (jsonElementXXX.ValueKind == JsonValueKind.Object)
+                        {
+                            value = FindBestMatch(jsonElementXXX, typeToConvert ?? typeof(object), options);
+                        }
+                        else
+                        {
+                            var single = Read(ref reader, null, options);
+                            value = Array.CreateInstance(single.GetType(), 1);
+                        }
+
+                        break;
+                        //list.Add(Read(ref reader, null, options));
+                        //if (bestMatch is not null)
+                        //{
+                        //    break;
+                        //}
+                    }
+                   // bestMatch = (bestMatch ?? false);
+
+
+                    //var array = new List<object?>();
+                    //foreach (var i in jsonElementAsArray.EnumerateArray())
+                    //{
+                    //    array.Add(Read(ref reader, null, options));
+                    //}
+                    break;
+
                 case JsonTokenType.StartObject:
                     var jsonElement = GetConverter<JsonElement>(options).Read(ref reader, typeof(object), options);
-                    bestMatch = FindBestMatch(jsonElement, typeToConvert, options);
+                    value = FindBestMatch(jsonElement, typeToConvert?? typeof(object), options);
                     break;
 
                 //case JsonTokenType.StartArray:
                 //    return options.GetConverter<JsonNode>().Read(ref reader, typeToConvert, options);
 
                 case JsonTokenType.String:
-                    bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
+                    if (reader.TryGetDateTime(out var date))
+                    {
+                        value = date;
+                    }
+                    else
+                    {
+                        value = reader.GetString();
+                    }
+                    // bestMatch = (GetConverter<string>(options).Read(ref reader, typeToConvert, options), typeof(string));
                     break;
 
                 case JsonTokenType.Number:
-                    bestMatch = ReadNumber(ref reader);
+                    value = ReadNumber(ref reader).value;
                     break;
 
                 case JsonTokenType.True:
-                    bestMatch = (true, typeof(bool));
+                    value = true; // (true, typeof(bool));
                     break;
 
                 case JsonTokenType.False:
-                    bestMatch = (false, typeof(bool));
+                    value = false; // (false, typeof(bool));
                     break;
 
                 case JsonTokenType.Null:
-                    bestMatch = (null, typeof(object));
+                    value = null; // (null, typeof(object));
                     break;
 
                 default:
                     throw new JsonException($"The TokenType '{reader.TokenType}' cannot be deserialized.");
             }
 
-            if (bestMatch.value is null)
+            if (typeToConvert is null)
+            {
+                return value;
+            }
+
+            if (value is null)
             {
                 return Activator.CreateInstance(typeToConvert);
             }
 
-            return Activator.CreateInstance(typeToConvert, bestMatch.value);
+            return Activator.CreateInstance(typeToConvert, value);
+        }
+
+        private object? GetNonObjectValue()
+        {
+            return 3;
         }
 
         private (object value, Type type) ReadNumber(ref Utf8JsonReader reader)
@@ -82,9 +137,17 @@ namespace AnyOfTypes.System.Text.Json
             throw new JsonException();
         }
 
-        private (object? value, Type type) FindBestMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
+        private object? FindBestMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
         {
             Type? mostSuitableType = null;
+
+            if (jsonElement.ValueKind == JsonValueKind.Array)
+            {
+                
+
+                int xxxxx = 0;
+            }
+
             int countOfMaxMatchingProperties = -1;
 
             // Take the names of elements from json data
@@ -118,7 +181,7 @@ namespace AnyOfTypes.System.Text.Json
 
             if (mostSuitableType != null)
             {
-                return (ToObject(jsonElement, mostSuitableType, options), mostSuitableType);
+                return ToObject(jsonElement, mostSuitableType, options);
             }
 
             throw new JsonException($"Could not deserialize '{typeToConvert}', no suitable type found.");
