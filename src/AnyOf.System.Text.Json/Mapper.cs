@@ -5,18 +5,14 @@ using System.Reflection;
 
 namespace AnyOfTypes.System.Text.Json
 {
-    internal class PropertyMap
+    internal struct PropertyMap
     {
-        //public PropertyInfo SourceProperty { get; set; }
+        public PropertyDetails SourceProperty { get; set; }
 
-        //public PropertyInfo TargetProperty { get; set; }
-
-        public P SourceProperty { get; set; }
-
-        public P TargetProperty { get; set; }
+        public PropertyDetails TargetProperty { get; set; }
     }
 
-    internal class P
+    internal struct PropertyDetails
     {
         public string Name { get; set; }
 
@@ -28,32 +24,32 @@ namespace AnyOfTypes.System.Text.Json
 
         public bool IsValueType { get; set; }
 
-        public Type PropertyType { get; set; }
+        public Type? PropertyType { get; set; }
     }
 
     internal static class Mapper
     {
-        public static IList<PropertyMap> GetMatchingProperties(IEnumerable<P> sourceProperties, IEnumerable<P> targetProperties)
+        public static IList<PropertyMap> GetMatchingProperties(IEnumerable<PropertyDetails> sourceProperties, IEnumerable<PropertyDetails> targetProperties)
         {
-            var properties = (from s in sourceProperties
-                              from t in targetProperties
-                              where s.Name == t.Name &&
-                                    s.CanRead &&
-                                    t.CanWrite &&
-                                    s.PropertyType.IsPublic &&
-                                    t.PropertyType.IsPublic &&
-                                    s.PropertyType == t.PropertyType &&
-                                    (
-                                      (s.PropertyType.IsValueType && t.PropertyType.IsValueType) ||
-                                      (s.PropertyType == typeof(string) && t.PropertyType == typeof(string))
-                                    )
-                              select new PropertyMap
-                              {
-                                  SourceProperty = s,
-                                  TargetProperty = t
-                              }).ToList();
-
-            return properties;
+            return
+            (
+                from s in sourceProperties
+                from t in targetProperties
+                where s.Name == t.Name &&
+                    s.CanRead &&
+                    t.CanWrite &&
+                    s.IsPublic &&
+                    t.IsPublic &&
+                    s.PropertyType == t.PropertyType &&
+                    (
+                        (s.IsValueType && t.IsValueType) || (s.PropertyType == typeof(string) && t.PropertyType == typeof(string))
+                    )
+                select new PropertyMap
+                {
+                    SourceProperty = s,
+                    TargetProperty = t
+                }
+            ).ToList();
         }
 
         public static IList<PropertyMap> GetMatchingProperties(Type sourceType, Type targetType)
@@ -61,56 +57,20 @@ namespace AnyOfTypes.System.Text.Json
             return GetMatchingProperties(Map(sourceType.GetProperties()), Map(targetType.GetProperties()));
         }
 
-        private static IEnumerable<P> Map(PropertyInfo[] properties)
+        private static IEnumerable<PropertyDetails> Map(PropertyInfo[] properties)
         {
-            return properties.Select(s => new P
+            return properties.Select(p => new PropertyDetails
             {
-                CanRead = s.CanRead,
-                CanWrite = s.CanWrite,
-                IsPublic = s.PropertyType.IsPublic,
-                IsValueType = s.PropertyType.IsValueType,
-                Name = s.Name,
-                PropertyType = s.PropertyType
+                CanRead = p.CanRead,
+                CanWrite = p.CanWrite,
+                IsPublic = p.PropertyType.IsPublic,
+                IsValueType = p.PropertyType.IsValueType,
+                Name = p.Name,
+                PropertyType = p.PropertyType
             });
         }
 
-        public static string GetClassName(Type sourceType, Type targetType)
-        {
-            var className = "Copy_";
-
-            className += sourceType.FullName.Replace(".", "_");
-            className += "_";
-            className += targetType.FullName.Replace(".", "_");
-
-            return className;
-        }
-
-        private static Dictionary<string, PropertyMap[]> _maps = new Dictionary<string, PropertyMap[]>();
-
-        public static void AddPropertyMap<T, TU>()
-        {
-            var props = GetMatchingProperties(typeof(T), typeof(TU));
-            var className = GetClassName(typeof(T), typeof(TU));
-
-            _maps.Add(className, props.ToArray());
-
-        }
-
-        //public static void CopyMatchingCachedProperties(object source, object target)
-        //{
-        //    var className = GetClassName(source.GetType(), target.GetType());
-
-        //    var propMap = _maps[className];
-        //    for (var i = 0; i < propMap.Length; i++)
-        //    {
-        //        var prop = propMap[i];
-
-        //        var sourceValue = prop.SourceProperty.GetValue(source, null);
-        //        prop.TargetProperty.SetValue(target, sourceValue, null);
-        //    }
-        //}
-
-        public static Type? FindBestType(IEnumerable<P> sourceType, Type[] targetTypes)
+        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceType, Type[] targetTypes)
         {
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
@@ -127,21 +87,5 @@ namespace AnyOfTypes.System.Text.Json
 
             return mostSuitableType;
         }
-
-        //public static void CopyProperties(object source, object target)
-        //{
-        //    var sourceType = source.GetType();
-        //    var targetType = target.GetType();
-
-        //    var propMap = GetMatchingProperties(sourceType, targetType);
-        //    for (var i = 0; i < propMap.Count; i++)
-        //    {
-        //        var prop = propMap[i];
-
-        //        var sourceValue = prop.SourceProperty.GetValue(source, null);
-
-        //        prop.TargetProperty.SetValue(target, sourceValue, null);
-        //    }
-        //}
     }
 }
