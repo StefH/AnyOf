@@ -129,6 +129,28 @@ namespace AnyOfTypes.System.Text.Json.Tests
         }
 
         [Fact]
+        public void Serialize_AnyOf_With_ObjectList()
+        {
+            // Arrange
+            var test = new TestComplexArray
+            {
+                X = new List<A> { new A { Id= 1 }, new A { Id = 2 } }
+            };
+
+            // Act
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = false
+            };
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var json = JsonSerializer.Serialize(test, options);
+
+            // Assert
+            json.Should().Be("{\"X\":[{\"Id\":1},{\"Id\":2}]}");
+        }
+
+        [Fact]
         public void Deserialize_AnyOf_With_SimpleTypes()
         {
             // Arrange
@@ -196,6 +218,38 @@ namespace AnyOfTypes.System.Text.Json.Tests
             options.Converters.Add(new AnyOfJsonConverter());
 
             var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
+
+            // Assert
+            result.X.First.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_StringList()
+        {
+            // Arrange
+            var expected = new [] { "a", "b" };
+
+            // Act
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
+
+            // Assert
+            result.X.First.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_ObjectList()
+        {
+            // Arrange
+            var expected = new[] { "a", "b" };
+
+            // Act
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options);
 
             // Assert
             result.X.First.Should().BeEquivalentTo(expected);

@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Text;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -20,38 +21,42 @@ namespace AnyOfTypes.System.Text.Json
             switch (jsonElement.ValueKind)
             {
                 case JsonValueKind.Array:
-                    var list = new List<object?>();
+                    value = FindBestArrayMatch(jsonElement, typeToConvert ?? typeof(object), options);
 
-                    foreach (var arrayElement in jsonElement.EnumerateArray())
-                    {
-                        if (arrayElement.ValueKind == JsonValueKind.Object)
-                        {
-                            value = FindBestMatch(arrayElement, typeToConvert ?? typeof(object), options);
-                        }
-                        else
-                        {
-                            value = GetNonObjectValue(arrayElement);
-                        }
+                    //var list = new List<object?>();
 
-                        list.Add(value);
-                    }
+                    //foreach (var arrayElement in jsonElement.EnumerateArray())
+                    //{
+                    //    var valuex = FindBestObjectMatch(arrayElement, typeToConvert ?? typeof(object), options);
 
-                    Type? listType = null;
-                    if (list.Any())
-                    {
-                        listType = list.First()?.GetType();
-                    }
+                    //    if (arrayElement.ValueKind == JsonValueKind.Object)
+                    //    {
+                    //        value = FindBestObjectMatch(arrayElement, typeToConvert ?? typeof(object), options);
+                    //    }
+                    //    else
+                    //    {
+                    //        value = GetNonObjectValue(arrayElement);
+                    //    }
 
-                    listType ??= typeof(object);
+                    //    list.Add(value);
+                    //}
 
-                    var arr = Array.CreateInstance(listType, list.Count());
-                    Array.Copy(list.ToArray(), arr, list.Count);
+                    //Type? listType = null;
+                    //if (list.Any())
+                    //{
+                    //    listType = list.First()?.GetType();
+                    //}
 
-                    value = arr; // list.Select(x => Convert.ChangeType(x, listType)).ToArray();
+                    //listType ??= typeof(object);
+
+                    //var arr = Array.CreateInstance(listType, list.Count());
+                    //Array.Copy(list.ToArray(), arr, list.Count);
+
+                    //value = arr;
                     break;
 
                 case JsonValueKind.Object:
-                    value = FindBestMatch(jsonElement, typeToConvert ?? typeof(object), options);
+                    value = FindBestObjectMatch(jsonElement, typeToConvert ?? typeof(object), options);
                     break;
 
                 default:
@@ -148,7 +153,50 @@ namespace AnyOfTypes.System.Text.Json
             throw new JsonException();
         }
 
-        private object? FindBestMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
+        private object? FindBestArrayMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
+        {
+            var list = new List<object?>();
+
+            foreach (var arrayElement in jsonElement.EnumerateArray())
+            {
+                object? value;
+                if (arrayElement.ValueKind == JsonValueKind.Object)
+                {
+                    value = FindBestObjectMatch(arrayElement, typeToConvert ?? typeof(object), options);
+                }
+                else
+                {
+                    value = GetNonObjectValue(arrayElement);
+                }
+
+                list.Add(value);
+            }
+
+            Type? elementType = null;
+            if (list.Any())
+            {
+                elementType = list.First()?.GetType();
+            }
+
+            Type? bestMatchingIEnumerableType = null;
+            foreach (var knownIEnumerableType in typeToConvert.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)))
+            {
+                if (GetElementType(knownIEnumerableType) == elementType)
+                {
+                    var r = Convert.ChangeType(list, knownIEnumerableType);
+                    return r;
+                }
+            }
+
+            return null;
+        }
+
+        private static Type GetElementType(Type enumerableType)
+        {
+            return enumerableType.IsArray ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
+        }
+
+        private object? FindBestObjectMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
         {
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
