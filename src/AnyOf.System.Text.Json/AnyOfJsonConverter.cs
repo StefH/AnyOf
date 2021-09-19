@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AnyOfTypes.System.Text.Json.Extensions;
+using Nelibur.ObjectMapper;
 
 namespace AnyOfTypes.System.Text.Json
 {
@@ -60,7 +61,7 @@ namespace AnyOfTypes.System.Text.Json
                     break;
 
                 default:
-                    value = GetNonObjectValue(jsonElement);
+                    value = AnyOfJsonConverter.GetNonObjectValue(jsonElement);
                     break;
             }
 
@@ -77,7 +78,7 @@ namespace AnyOfTypes.System.Text.Json
             return Activator.CreateInstance(typeToConvert, value);
         }
 
-        private object? GetNonObjectValue(JsonElement reader)
+        private static object? GetNonObjectValue(JsonElement reader)
         {
 
             switch (reader.ValueKind)
@@ -157,78 +158,141 @@ namespace AnyOfTypes.System.Text.Json
         {
             var list = new List<object?>();
 
+            Type? elementType = null;
             foreach (var arrayElement in jsonElement.EnumerateArray())
             {
                 object? value;
                 if (arrayElement.ValueKind == JsonValueKind.Object)
                 {
                     value = FindBestObjectMatch(arrayElement, typeToConvert ?? typeof(object), options);
+                    elementType = value?.GetType();
                 }
                 else
                 {
-                    value = GetNonObjectValue(arrayElement);
+                    value = AnyOfJsonConverter.GetNonObjectValue(arrayElement);
+                    elementType = value?.GetType();
                 }
 
                 list.Add(value);
             }
 
-            Type? elementType = null;
-            if (list.Any())
+            if (elementType is null)
             {
-                elementType = list.First()?.GetType();
+                return null;
             }
 
-            Type? bestMatchingIEnumerableType = null;
+            var (newList, newListType) = CastToTypedList(list, elementType);
+
             foreach (var knownIEnumerableType in typeToConvert.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)))
             {
                 if (GetElementType(knownIEnumerableType) == elementType)
                 {
-                    var r = Convert.ChangeType(list, knownIEnumerableType);
-                    return r;
+                    TinyMapper.Bind(newListType, knownIEnumerableType);
+                    return TinyMapper.Map(newListType, knownIEnumerableType, newList);
                 }
             }
 
             return null;
         }
 
-        private static Type GetElementType(Type enumerableType)
+        public static (IList, Type) CastToTypedList(IList source, Type elementType)
+        {
+            var listType = typeof(List<>).MakeGenericType(elementType);
+            IList list = (IList) Activator.CreateInstance(listType);
+            foreach (var item in source) 
+            {
+                list.Add(item);
+            }
+
+            return (list, listType);
+        }
+
+        private static Type? GetElementType(Type enumerableType)
         {
             return enumerableType.IsArray ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
         }
 
-        private object? FindBestObjectMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
+        private static object? FindBestObjectMatch(JsonElement jsonElement, Type typeToConvert, JsonSerializerOptions options)
         {
-            Type? mostSuitableType = null;
-            int countOfMaxMatchingProperties = -1;
-
-            // Take the names of elements from json data
-            var jObjectKeys = jsonElement.EnumerateObject().Select(p => p.Name);
-
-            foreach (var knownType in typeToConvert.GetGenericArguments())
+            var properties = new List<P>();
+            foreach (var e in jsonElement.EnumerateObject())
             {
-                // Select properties
-                var notIgnoreProps = knownType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-
-                // Get serializable property names
-                var jsonNameFields = notIgnoreProps.Select(prop => prop.Name);
-
-                var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
-
-                // By intersecting the sets of names we determine the most suitable inheritor
-                int count = jObjectKeys.Intersect(jKnownTypeKeys).Count();
-
-                if (count == jKnownTypeKeys.Count)
+                var p = new P
                 {
-                    mostSuitableType = knownType;
-                    break;
+                    CanRead = true,
+                    CanWrite = true,
+                    IsPublic = true,
+                    Name = e.Name
+                };
+
+                object? val;
+                switch (e.Value.ValueKind)
+                {
+                    case JsonValueKind.Object:
+                        val = FindBestObjectMatch(e.Value, typeToConvert,options);
+                        break;
+
+                    default:
+                        val = GetNonObjectValue(e.Value);
+                        break;
+
                 }
 
-                if (count > countOfMaxMatchingProperties)
-                {
-                    countOfMaxMatchingProperties = count;
-                    mostSuitableType = knownType;
-                }
+                p.PropertyType = val?.GetType();
+                p.IsValueType = val?.GetType().IsValueType == true;
+
+                properties.Add(p);
             }
+
+            //var properties = jsonElement.EnumerateObject().Select(e => new P
+            //{
+            //    CanRead = true,
+            //    CanWrite = true,
+            //    IsPublic = true,
+            //    Name = e.Name,
+            //    IsValueType = e.Value.GetType().IsValueType,
+            //    PropertyType = e.Value.GetType()
+            //});
+
+            var mostSuitableType = Mapper.FindBestType(properties, typeToConvert.GetGenericArguments());
+
+
+
+
+            //Type? mostSuitableType = null;
+            //int countOfMaxMatchingProperties = -1;
+
+
+
+
+            //// Take the names of elements from json data
+            //var jObjectKeys = jsonElement.EnumerateObject().Select(p => p.Name);
+
+            //foreach (var knownType in typeToConvert.GetGenericArguments())
+            //{
+            //    // Select properties
+            //    var notIgnoreProps = knownType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+
+            //    // Get serializable property names
+            //    var jsonNameFields = notIgnoreProps.Select(prop => prop.Name);
+
+            //    var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
+
+            //    // By intersecting the sets of names we determine the most suitable inheritor
+            //    int count = jObjectKeys.Intersect(jKnownTypeKeys).Count();
+
+            //    if (count == jKnownTypeKeys.Count)
+            //    {
+            //        mostSuitableType = knownType;
+            //        break;
+            //    }
+
+            //    if (count > countOfMaxMatchingProperties)
+            //    {
+            //        countOfMaxMatchingProperties = count;
+            //        mostSuitableType = knownType;
+            //    }
+            //}
 
             if (mostSuitableType != null)
             {
@@ -271,7 +335,7 @@ namespace AnyOfTypes.System.Text.Json
         /// - https://stackoverflow.com/questions/58138793/system-text-json-jsonelement-toobject-workaround
         /// - https://stackoverflow.com/a/58193164/255966
         /// </summary>
-        private static object ToObject(JsonElement element, Type returnType, JsonSerializerOptions? options = null)
+        private static object? ToObject(JsonElement element, Type returnType, JsonSerializerOptions? options = null)
         {
             var json = element.GetRawText();
             return JsonSerializer.Deserialize(json, returnType, options);

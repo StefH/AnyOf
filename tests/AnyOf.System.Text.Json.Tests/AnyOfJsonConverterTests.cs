@@ -236,7 +236,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
 
             // Assert
-            result.X.First.Should().BeEquivalentTo(expected);
+            result.X.Second.Should().BeEquivalentTo(expected);
         }
 
         [Fact]
