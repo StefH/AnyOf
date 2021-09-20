@@ -2,34 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using AnyOf.System.Text.Json.Matcher.Models;
 
-namespace AnyOfTypes.System.Text.Json
+namespace AnyOfTypes.System.Text.Json.Matcher
 {
-    internal struct PropertyMap
+    internal static class MatchFinder
     {
-        public PropertyDetails SourceProperty { get; set; }
+        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceType, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
+        {
+            Type? mostSuitableType = null;
+            int countOfMaxMatchingProperties = -1;
 
-        public PropertyDetails TargetProperty { get; set; }
-    }
+            foreach (var targetType in targetTypes)
+            {
+                var propMap = GetMatchingProperties(sourceType, Map(targetType.GetProperties()));
+                if (propMap.Count > countOfMaxMatchingProperties)
+                {
+                    mostSuitableType = targetType;
+                    countOfMaxMatchingProperties = propMap.Count;
+                }
+            }
 
-    internal struct PropertyDetails
-    {
-        public string Name { get; set; }
+            return countOfMaxMatchingProperties == 0 && returnNullIfNoMatchFound ? null : mostSuitableType;
+        }
 
-        public bool CanRead { get; set; }
-
-        public bool CanWrite { get; set; }
-
-        public bool IsPublic { get; set; }
-
-        public bool IsValueType { get; set; }
-
-        public Type? PropertyType { get; set; }
-    }
-
-    internal static class Mapper
-    {
-        public static IList<PropertyMap> GetMatchingProperties(IEnumerable<PropertyDetails> sourceProperties, IEnumerable<PropertyDetails> targetProperties)
+        private static IList<PropertyMap> GetMatchingProperties(IEnumerable<PropertyDetails> sourceProperties, IEnumerable<PropertyDetails> targetProperties)
         {
             return
             (
@@ -68,24 +65,6 @@ namespace AnyOfTypes.System.Text.Json
                 Name = p.Name,
                 PropertyType = p.PropertyType
             });
-        }
-
-        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceType, Type[] targetTypes)
-        {
-            Type? mostSuitableType = null;
-            int countOfMaxMatchingProperties = -1;
-
-            foreach (var targetType in targetTypes)
-            {
-                var propMap = GetMatchingProperties(sourceType, Map(targetType.GetProperties()));
-                if (propMap.Count > countOfMaxMatchingProperties)
-                {
-                    mostSuitableType = targetType;
-                    countOfMaxMatchingProperties = propMap.Count;
-                }
-            }
-
-            return mostSuitableType;
         }
     }
 }

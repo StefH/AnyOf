@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\AnyOf.System.Text.Json.Tests\TestModels\TestModels.cs" Link="TestModels\TestModels.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
@@ -22,6 +26,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\AnyOf.Newtonsoft.Json\AnyOf.Newtonsoft.Json.csproj" />
     <ProjectReference Include="..\..\src\AnyOf\AnyOf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="TestModels\" />
   </ItemGroup>
 
   

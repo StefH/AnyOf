@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AnyOf.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Matcher;
 using Nelibur.ObjectMapper;
 
 namespace AnyOfTypes.System.Text.Json
@@ -19,7 +21,7 @@ namespace AnyOfTypes.System.Text.Json
             switch (jsonElement.ValueKind)
             {
                 case JsonValueKind.Array:
-                    
+
                     value = FindBestArrayMatch(jsonElement, typeToConvert, options);
                     break;
 
@@ -145,8 +147,8 @@ namespace AnyOfTypes.System.Text.Json
         public static (IList, Type) CastToTypedList(IList source, Type elementType)
         {
             var listType = typeof(List<>).MakeGenericType(elementType);
-            var list = (IList) Activator.CreateInstance(listType);
-            foreach (var item in source) 
+            var list = (IList)Activator.CreateInstance(listType);
+            foreach (var item in source)
             {
                 list.Add(item);
             }
@@ -185,9 +187,8 @@ namespace AnyOfTypes.System.Text.Json
                 properties.Add(propertyDetails);
             }
 
-            var mostSuitableType = Mapper.FindBestType(properties, types);
-
-            if (mostSuitableType != null)
+            var mostSuitableType = MatchFinder.FindBestType(properties, types);
+            if (mostSuitableType is not null)
             {
                 return ToObject(objectElement, mostSuitableType, options);
             }
