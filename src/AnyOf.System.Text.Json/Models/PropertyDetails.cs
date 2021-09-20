@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AnyOf.System.Text.Json.Matcher.Models
+namespace AnyOfTypes.System.Text.Json.Matcher.Models
 {
     internal struct PropertyDetails
     {

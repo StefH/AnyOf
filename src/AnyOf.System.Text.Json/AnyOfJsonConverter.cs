@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AnyOf.System.Text.Json.Extensions;
-using AnyOf.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Extensions;
 using AnyOfTypes.System.Text.Json.Matcher;
+using AnyOfTypes.System.Text.Json.Matcher.Models;
 using Nelibur.ObjectMapper;
 
 namespace AnyOfTypes.System.Text.Json
@@ -130,14 +130,14 @@ namespace AnyOfTypes.System.Text.Json
                 return null;
             }
 
-            var listDetails = list.CastToTypedList(elementType);
+            var typedListDetails = list.CastToTypedList(elementType);
 
             foreach (var knownIEnumerableType in enumerableTypes)
             {
                 if (knownIEnumerableType.GetElementTypeX() == elementType)
                 {
-                    TinyMapper.Bind(listDetails.ListType, knownIEnumerableType);
-                    return TinyMapper.Map(listDetails.ListType, knownIEnumerableType, listDetails.List);
+                    TinyMapper.Bind(typedListDetails.ListType, knownIEnumerableType);
+                    return TinyMapper.Map(typedListDetails.ListType, knownIEnumerableType, typedListDetails.List);
                 }
             }
 
@@ -192,14 +192,14 @@ namespace AnyOfTypes.System.Text.Json
                 return;
             }
 
-            var currentValue = GetNullablePropertyValue(value, "CurrentValue");
+            var currentValue = value.GetNullablePropertyValue("CurrentValue");
             if (currentValue == null)
             {
                 writer.WriteNullValue();
                 return;
             }
 
-            var currentType = GetPropertyValue<Type>(value, "CurrentValueType");
+            var currentType = value.GetPropertyValue<Type>("CurrentValueType");
             JsonSerializer.Serialize(writer, currentValue, currentType, options);
         }
 
@@ -229,29 +229,6 @@ namespace AnyOfTypes.System.Text.Json
         private static JsonConverter<T> GetConverter<T>(JsonSerializerOptions options)
         {
             return (JsonConverter<T>)options.GetConverter(typeof(T));
-        }
-
-        private static T GetPropertyValue<T>(object instance, string name)
-        {
-            var value = GetNullablePropertyValue(instance, name);
-            if (value is null)
-            {
-                throw new JsonException($"The public property '{name}' has a null value.");
-            }
-
-            return (T)value;
-        }
-
-        private static object? GetNullablePropertyValue(object instance, string name)
-        {
-            var type = instance.GetType();
-            var propertyInfo = type.GetProperty(name);
-            if (propertyInfo is null)
-            {
-                throw new JsonException($"The type '{type}' does not contain public property '{name}'.");
-            }
-
-            return propertyInfo.GetValue(instance);
         }
     }
 }

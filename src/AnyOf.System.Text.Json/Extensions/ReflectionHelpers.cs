@@ -3,15 +3,37 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AnyOf.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Matcher.Models;
 
-namespace AnyOf.System.Text.Json.Extensions
+namespace AnyOfTypes.System.Text.Json.Extensions
 {
     internal static class ReflectionHelpers
     {
         [ThreadStatic]
         static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new Dictionary<KeyValuePair<Type, Type>, bool>();
 
+        public static T GetPropertyValue<T>(this object instance, string name)
+        {
+            var value = GetNullablePropertyValue(instance, name);
+            if (value is null)
+            {
+                throw new InvalidOperationException($"The public property '{name}' has a null value.");
+            }
+
+            return (T)value;
+        }
+
+        public static object? GetNullablePropertyValue(this object instance, string name)
+        {
+            var type = instance.GetType();
+            var propertyInfo = type.GetProperty(name);
+            if (propertyInfo is null)
+            {
+                throw new InvalidOperationException($"The type '{type}' does not contain public property '{name}'.");
+            }
+
+            return propertyInfo.GetValue(instance);
+        }
         public static Type GetElementTypeX(this Type enumerableType)
         {
             return enumerableType.IsArray == true ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
@@ -61,7 +83,6 @@ namespace AnyOf.System.Text.Json.Extensions
                 return ImplicitCastCache[key] = true;
             }
 #endif
-
             if (from.GetMethods(BindingFlags.Public | BindingFlags.Static).Any(m => m.ReturnType == to && (m.Name == "op_Implicit" || m.Name == "op_Explicit")))
             {
                 return ImplicitCastCache[key] = true;

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AnyOf.System.Text.Json.Extensions;
-using AnyOf.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Extensions;
+using AnyOfTypes.System.Text.Json.Matcher.Models;
 
 namespace AnyOfTypes.System.Text.Json.Matcher
 {

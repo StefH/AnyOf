@@ -13,9 +13,9 @@
   <ItemGroup>
     <Compile Include="..\AnyOf.System.Text.Json\Extensions\ReflectionHelpers.cs" Link="Extensions\ReflectionHelpers.cs" />
     <Compile Include="..\AnyOf.System.Text.Json\Matcher\MatchFinder.cs" Link="Matcher\MatchFinder.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Matcher\Models\ListDetails.cs" Link="Matcher\Models\ListDetails.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Matcher\Models\PropertyDetails.cs" Link="Matcher\Models\PropertyDetails.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Matcher\Models\PropertyMap.cs" Link="Matcher\Models\PropertyMap.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Models\ListDetails.cs" Link="Models\ListDetails.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyDetails.cs" Link="Models\PropertyDetails.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyMap.cs" Link="Models\PropertyMap.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,7 +31,7 @@
 
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="Matcher\Models\" />
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
