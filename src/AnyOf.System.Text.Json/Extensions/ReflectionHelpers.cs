@@ -1,14 +1,37 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using AnyOf.System.Text.Json.Matcher.Models;
 
 namespace AnyOf.System.Text.Json.Extensions
 {
-    public static class ReflectionHelpers
+    internal static class ReflectionHelpers
     {
         [ThreadStatic]
         static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new Dictionary<KeyValuePair<Type, Type>, bool>();
+
+        public static Type GetElementTypeX(this Type enumerableType)
+        {
+            return enumerableType.IsArray == true ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
+        }
+
+        public static ListDetails CastToTypedList(this IList source, Type elementType)
+        {
+            var listType = typeof(List<>).MakeGenericType(elementType);
+            var list = (IList)Activator.CreateInstance(listType);
+            foreach (var item in source)
+            {
+                list.Add(item);
+            }
+
+            return new ListDetails
+            {
+                List = list,
+                ListType = listType
+            };
+        }
 
         /// <summary>
         /// https://stackoverflow.com/questions/17676838/how-to-check-if-type-can-be-converted-to-another-type-in-c-sharp

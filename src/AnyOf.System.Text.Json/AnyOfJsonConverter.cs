@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AnyOf.System.Text.Json.Extensions;
 using AnyOf.System.Text.Json.Matcher.Models;
 using AnyOfTypes.System.Text.Json.Matcher;
 using Nelibur.ObjectMapper;
@@ -99,7 +100,7 @@ namespace AnyOfTypes.System.Text.Json
         private object? FindBestArrayMatch(JsonElement jsonElement, Type? typeToConvert, JsonSerializerOptions options)
         {
             var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? new Type[0];
-            var types = enumerableTypes.Select(t => GetElementType(t)).ToArray();
+            var types = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
 
             var list = new List<object?>();
 
@@ -129,30 +130,18 @@ namespace AnyOfTypes.System.Text.Json
                 return null;
             }
 
-            var (newList, newListType) = CastToTypedList(list, elementType);
+            var listDetails = list.CastToTypedList(elementType);
 
             foreach (var knownIEnumerableType in enumerableTypes)
             {
-                if (GetElementType(knownIEnumerableType) == elementType)
+                if (knownIEnumerableType.GetElementTypeX() == elementType)
                 {
-                    TinyMapper.Bind(newListType, knownIEnumerableType);
-                    return TinyMapper.Map(newListType, knownIEnumerableType, newList);
+                    TinyMapper.Bind(listDetails.ListType, knownIEnumerableType);
+                    return TinyMapper.Map(listDetails.ListType, knownIEnumerableType, listDetails.List);
                 }
             }
 
             return null;
-        }
-
-        public static (IList, Type) CastToTypedList(IList source, Type elementType)
-        {
-            var listType = typeof(List<>).MakeGenericType(elementType);
-            var list = (IList)Activator.CreateInstance(listType);
-            foreach (var item in source)
-            {
-                list.Add(item);
-            }
-
-            return (list, listType);
         }
 
         private static object? FindBestObjectMatch(JsonElement objectElement, Type[] types, JsonSerializerOptions options)
@@ -263,11 +252,6 @@ namespace AnyOfTypes.System.Text.Json
             }
 
             return propertyInfo.GetValue(instance);
-        }
-
-        private static Type GetElementType(Type enumerableType)
-        {
-            return enumerableType.IsArray ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
         }
     }
 }

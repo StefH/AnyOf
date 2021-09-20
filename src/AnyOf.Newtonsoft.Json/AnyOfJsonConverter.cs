@@ -1,11 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Xml.Linq;
+using AnyOf.System.Text.Json.Extensions;
 using AnyOf.System.Text.Json.Matcher.Models;
 using AnyOfTypes.System.Text.Json.Matcher;
+using Nelibur.ObjectMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -37,6 +39,151 @@ namespace AnyOfTypes.Newtonsoft.Json
             serializer.Serialize(writer, currentValue);
         }
 
+        private static object? GetSimpleValue(JsonReader reader, Type objectType, object existingValue)
+        {
+            var jValue = new JValue(reader.Value);
+
+            object? value;
+            switch (reader.TokenType)
+            {
+                case JsonToken.String:
+                    value = (string)jValue;
+                    break;
+
+                case JsonToken.Date:
+                    value = (DateTime)jValue;
+                    break;
+
+                case JsonToken.Boolean:
+                    value = (bool)jValue;
+                    break;
+
+                case JsonToken.Integer:
+                    value = (int)jValue;
+                    break;
+
+                case JsonToken.Float:
+                    value = (double)jValue;
+                    break;
+
+                default:
+                    value = jValue.Value;
+                    break;
+            }
+
+            if (value is null)
+            {
+                return existingValue;
+            }
+
+            return Activator.CreateInstance(objectType, value);
+        }
+
+        private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object existingValue, JsonSerializer serializer)
+        {
+            var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? new Type[0];
+            var types = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
+
+            var list = new List<object?>();
+
+            Type? elementType = null;
+
+            while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+            {
+                object? value;
+                if (reader.TokenType == JsonToken.StartObject)
+                {
+                    value = FindBestObjectMatch(reader, typeToConvert ?? typeof(object), serializer);
+                }
+                else
+                {
+                    value = GetSimpleValue(reader, typeToConvert ?? typeof(object), existingValue);
+                }
+
+                if (elementType is null)
+                {
+                    elementType = value?.GetType();
+                }
+
+                list.Add(value);
+            }
+
+            //foreach (var arrayElement in jsonElement.EnumerateArray())
+            //{
+            //    object? value;
+            //    if (arrayElement.ValueKind == JsonValueKind.Object)
+            //    {
+            //        value = FindBestObjectMatch(arrayElement, types, options);
+            //    }
+            //    else
+            //    {
+            //        value = GetSimpleValue(arrayElement);
+            //    }
+
+            //    if (elementType is null)
+            //    {
+            //        elementType = value?.GetType();
+            //    }
+
+            //    list.Add(value);
+            //}
+
+            if (elementType is null)
+            {
+                return null;
+            }
+
+            var listDetails = list.CastToTypedList(elementType);
+
+            foreach (var knownIEnumerableType in enumerableTypes)
+            {
+                if (knownIEnumerableType.GetElementTypeX() == elementType)
+                {
+                    TinyMapper.Bind(listDetails.ListType, knownIEnumerableType);
+                    return TinyMapper.Map(listDetails.ListType, knownIEnumerableType, listDetails.List);
+                }
+            }
+
+            return null;
+        }
+
+        private static object? FindBestObjectMatch(JsonReader reader, Type objectType, JsonSerializer serializer)
+        {
+            var properties = new List<PropertyDetails>();
+            var jObject = JObject.Load(reader);
+            foreach (var element in jObject)
+            {
+                var propertyDetails = new PropertyDetails
+                {
+                    CanRead = true,
+                    CanWrite = true,
+                    IsPublic = true,
+                    Name = element.Key
+                };
+
+                var val = element.Value.ToObject<object?>();
+                propertyDetails.PropertyType = val?.GetType();
+                propertyDetails.IsValueType = val?.GetType().GetTypeInfo().IsValueType == true;
+
+                properties.Add(propertyDetails);
+            }
+
+            var bestType = MatchFinder.FindBestType(properties, objectType?.GetGenericArguments() ?? new Type[0]);
+            if (bestType is not null)
+            {
+                var target = Activator.CreateInstance(bestType);
+
+                using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
+                {
+                    serializer.Populate(jObjectReader, target);
+                }
+
+                return Activator.CreateInstance(objectType, target);
+            }
+
+            throw new SerializationException($"Could not deserialize '{objectType}', no suitable type found.");
+        }
+
         /// <summary>
         /// See
         /// - https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net
@@ -44,9 +191,19 @@ namespace AnyOfTypes.Newtonsoft.Json
         /// </summary>
         public override object? ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            if (reader.TokenType == JsonToken.Null)
+            switch (reader.TokenType)
             {
-                return Activator.CreateInstance(objectType);
+                case JsonToken.Null:
+                    return Activator.CreateInstance(objectType);
+
+                case JsonToken.StartObject:
+                    return FindBestObjectMatch(reader, objectType, serializer);
+
+                case JsonToken.StartArray:
+                    return FindBestObjectMatch(reader, objectType, serializer);
+
+                default:
+                    return GetSimpleValue(reader, objectType, existingValue);
             }
 
             if (reader.TokenType != JsonToken.StartObject)
