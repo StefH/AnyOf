@@ -262,10 +262,9 @@ namespace AnyOfTypes.Newtonsoft.Json
         private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object existingValue, JsonSerializer serializer)
         {
             var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? new Type[0];
-            var types = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
+            var elementTypes = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
 
             var list = new List<object?>();
-
             Type? elementType = null;
 
             while (reader.Read() && reader.TokenType != JsonToken.EndArray)
@@ -273,7 +272,7 @@ namespace AnyOfTypes.Newtonsoft.Json
                 object? value;
                 if (reader.TokenType == JsonToken.StartObject)
                 {
-                    value = FindBestObjectMatch(reader, enumerableTypes, serializer);
+                    value = FindBestObjectMatch(reader, elementTypes, serializer);
                 }
                 else
                 {
@@ -288,26 +287,6 @@ namespace AnyOfTypes.Newtonsoft.Json
                 list.Add(value);
             }
 
-            //foreach (var arrayElement in jsonElement.EnumerateArray())
-            //{
-            //    object? value;
-            //    if (arrayElement.ValueKind == JsonValueKind.Object)
-            //    {
-            //        value = FindBestObjectMatch(arrayElement, types, options);
-            //    }
-            //    else
-            //    {
-            //        value = GetSimpleValue(arrayElement);
-            //    }
-
-            //    if (elementType is null)
-            //    {
-            //        elementType = value?.GetType();
-            //    }
-
-            //    list.Add(value);
-            //}
-
             if (elementType is null)
             {
                 return null;
@@ -321,7 +300,6 @@ namespace AnyOfTypes.Newtonsoft.Json
                 {
                     TinyMapper.Bind(listDetails.ListType, knownIEnumerableType);
                     return TinyMapper.Map(listDetails.ListType, knownIEnumerableType, listDetails.List);
-                    //return Activator.CreateInstance(typeToConvert, argumentValue);
                 }
             }
 
