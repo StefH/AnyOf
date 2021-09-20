@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using AnyOf.System.Text.Json.Extensions;
 using AnyOf.System.Text.Json.Matcher.Models;
 
 namespace AnyOfTypes.System.Text.Json.Matcher
 {
     internal static class MatchFinder
     {
-        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceType, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
+        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceProperties, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
         {
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
 
             foreach (var targetType in targetTypes)
             {
-                var propMap = GetMatchingProperties(sourceType, Map(targetType.GetProperties()));
+                var propMap = GetMatchingProperties(sourceProperties, Map(targetType.GetProperties()));
                 if (propMap.Count > countOfMaxMatchingProperties)
                 {
                     mostSuitableType = targetType;
@@ -37,7 +38,7 @@ namespace AnyOfTypes.System.Text.Json.Matcher
                     t.CanWrite &&
                     s.IsPublic &&
                     t.IsPublic &&
-                    s.PropertyType == t.PropertyType &&
+                    (s.PropertyType == t.PropertyType || s.PropertyType.IsImplicitlyCastableTo(t.PropertyType) || t.PropertyType.IsImplicitlyCastableTo(s.PropertyType)) &&
                     (
                         (s.IsValueType && t.IsValueType) || (s.PropertyType == typeof(string) && t.PropertyType == typeof(string))
                     )
@@ -60,8 +61,8 @@ namespace AnyOfTypes.System.Text.Json.Matcher
             {
                 CanRead = p.CanRead,
                 CanWrite = p.CanWrite,
-                IsPublic = p.PropertyType.IsPublic,
-                IsValueType = p.PropertyType.IsValueType,
+                IsPublic = p.PropertyType.GetTypeInfo().IsPublic,
+                IsValueType = p.PropertyType.GetTypeInfo().IsValueType,
                 Name = p.Name,
                 PropertyType = p.PropertyType
             });

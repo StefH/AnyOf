@@ -11,6 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\AnyOf.System.Text.Json\Extensions\ReflectionHelpers.cs" Link="Extensions\ReflectionHelpers.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Matcher\MatchFinder.cs" Link="Matcher\MatchFinder.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Matcher\Models\PropertyDetails.cs" Link="Matcher\Models\PropertyDetails.cs" />
+    <Compile Include="..\AnyOf.System.Text.Json\Matcher\Models\PropertyMap.cs" Link="Matcher\Models\PropertyMap.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
@@ -21,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Extensions\" />
     <Folder Include="Matcher\Models\" />
   </ItemGroup>
 

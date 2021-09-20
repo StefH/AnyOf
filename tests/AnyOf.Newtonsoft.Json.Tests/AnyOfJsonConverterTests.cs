@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AnyOf.System.Text.Json.Tests.TestModels;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -131,6 +132,90 @@ namespace AnyOfTypes.Newtonsoft.Json.Tests
 
             // Assert
             result.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_IntArray()
+        {
+            // Arrange
+            var expected = new int[] { 42 };
+
+            // Act
+            var options = new JsonSerializerSettings();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonConvert.DeserializeObject<TestComplexArray>("{\"X\":[42]}", options);
+
+            // Assert
+            result.X.First.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_StringList()
+        {
+            // Arrange
+            var expected = new[] { "a", "b" };
+
+            // Act
+            var options = new JsonSerializerSettings();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonConvert.DeserializeObject<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
+
+            // Assert
+            result.X.Second.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_ObjectList_A()
+        {
+            // Arrange
+            var expected = new List<A>
+            {
+                new A
+                {
+                    Id = 1
+                },
+                new A
+                {
+                    Id = 2
+                }
+            };
+
+            // Act
+            var options = new JsonSerializerSettings();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonConvert.DeserializeObject<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options);
+
+            // Assert
+            result.X.Third.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
+        public void Deserialize_AnyOf_With_ObjectList_B()
+        {
+            // Arrange
+            var expected = new List<B>
+            {
+                new B
+                {
+                    Guid = "a"
+                },
+                new B
+                {
+                    Guid = "b"
+                }
+            };
+
+            // Act
+            var options = new JsonSerializerSettings();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonConvert.DeserializeObject<TestComplexArray>("{\"X\":[{\"Guid\":\"a\"},{\"Guid\":\"b\"}]}", options);
+
+            // Assert
+            result.X.Fourth.Should().BeEquivalentTo(expected);
         }
     }
 }

@@ -21,7 +21,6 @@ namespace AnyOfTypes.System.Text.Json
             switch (jsonElement.ValueKind)
             {
                 case JsonValueKind.Array:
-
                     value = FindBestArrayMatch(jsonElement, typeToConvert, options);
                     break;
 

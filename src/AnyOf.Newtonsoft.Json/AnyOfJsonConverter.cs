@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
+using AnyOf.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Matcher;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -86,7 +89,39 @@ namespace AnyOfTypes.Newtonsoft.Json
                 return Activator.CreateInstance(objectType, value);
             }
 
+            var properties = new List<PropertyDetails>();
             var jObject = JObject.Load(reader);
+            foreach (var element in jObject)
+            {
+                var propertyDetails = new PropertyDetails
+                {
+                    CanRead = true,
+                    CanWrite = true,
+                    IsPublic = true,
+                    Name = element.Key
+                };
+
+                var val = element.Value.ToObject<object?>();
+                propertyDetails.PropertyType = val?.GetType();
+                propertyDetails.IsValueType = val?.GetType().GetTypeInfo().IsValueType == true;
+
+                properties.Add(propertyDetails);
+            }
+
+            var bestType = MatchFinder.FindBestType(properties, objectType?.GetGenericArguments() ?? new Type[0]);
+            if (bestType is not null)
+            {
+                var target = Activator.CreateInstance(bestType);
+
+                using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
+                {
+                    serializer.Populate(jObjectReader, target);
+                }
+
+                return Activator.CreateInstance(objectType, target);
+            }
+
+            throw new SerializationException($"Could not deserialize '{objectType}', no suitable type found.");
 
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
