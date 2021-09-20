@@ -8,6 +8,7 @@
     <PackageTags>AnyOf;types;AnyOfJsonConverter;JsonConverter;json;Newtonsoft</PackageTags>
     <LangVersion>9.0</LangVersion>
     <Nullable>enable</Nullable>
+    <RootNamespace>AnyOfTypes.Newtonsoft.Json</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
