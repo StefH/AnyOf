@@ -1,18 +1,22 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
+using AnyOfTypes.System.Text.Json.Extensions;
+using AnyOfTypes.System.Text.Json.Matcher;
+using AnyOfTypes.System.Text.Json.Matcher.Models;
+using Nelibur.ObjectMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RestEaseClientGeneratorConsoleApp
+namespace AnyOfTypes.Newtonsoft.Json
 {
     public class AnyOfJsonConverter : JsonConverter
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 if (serializer.NullValueHandling == NullValueHandling.Include)
                 {
@@ -21,7 +25,16 @@ namespace RestEaseClientGeneratorConsoleApp
                 return;
             }
 
-            var currentValue = GetPropertyValue(value, "CurrentValue");
+            var currentValue = value.GetNullablePropertyValue("CurrentValue");
+            if (currentValue is null)
+            {
+                if (serializer.NullValueHandling == NullValueHandling.Include)
+                {
+                    serializer.Serialize(writer, currentValue);
+                }
+                return;
+            }
+
             serializer.Serialize(writer, currentValue);
         }
 
@@ -30,96 +43,163 @@ namespace RestEaseClientGeneratorConsoleApp
         /// - https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net
         /// - https://stackoverflow.com/a/59286262/255966
         /// </summary>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object? ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
-            var jObject = JObject.Load(reader);
-
-            Type mostSuitableType = null;
-            int countOfMaxMatchingProperties = -1;
-
-            // Take the names of elements from json data
-            var jObjectKeys = GetKeys(jObject);
-
-            // Take the public properties of the parent class
-            var objectTypeProps = objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                .Select(p => p.Name).ToHashSet();
-
-            // Trying to find the right "KnownType"
-            foreach (var knownType in GetPropertyValue<Type[]>(existingValue, "Types"))
+            object? value;
+            switch (reader.TokenType)
             {
-                // Select properties of the inheritor, except properties from the parent class and properties with "ignore" attributes
-                var notIgnoreProps = knownType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-                    .Where(p => !objectTypeProps.Contains(p.Name) && p.CustomAttributes.All(a => a.AttributeType != typeof(JsonIgnoreAttribute)));
-
-                // Get serializable property names
-                var jsonNameFields = notIgnoreProps.Select(prop =>
-                {
-                    string jsonFieldName = null;
-                    var jsonPropertyAttribute = prop.CustomAttributes.FirstOrDefault(a => a.AttributeType == typeof(JsonPropertyAttribute));
-                    if (jsonPropertyAttribute != null)
-                    {
-                        // Take the name of the json element from the attribute constructor
-                        int constructorArgumentsCount = jsonPropertyAttribute.ConstructorArguments.Count;
-                        if (constructorArgumentsCount > 0)
-                        {
-                            var argument = jsonPropertyAttribute.ConstructorArguments.First();
-                            if (argument.ArgumentType == typeof(string) && !string.IsNullOrEmpty(argument.Value as string))
-                            {
-                                jsonFieldName = (string)argument.Value;
-                            }
-                        }
-                    }
-
-                    // Otherwise, take the name of the property
-                    if (string.IsNullOrEmpty(jsonFieldName))
-                    {
-                        jsonFieldName = prop.Name;
-                    }
-
-                    return jsonFieldName;
-                });
-
-                var jKnownTypeKeys = new HashSet<string>(jsonNameFields);
-
-                // By intersecting the sets of names we determine the most suitable inheritor
-                int count = jObjectKeys.Intersect(jKnownTypeKeys).Count();
-
-                if (count == jKnownTypeKeys.Count)
-                {
-                    mostSuitableType = knownType;
+                case JsonToken.Null:
+                    value = null;
                     break;
+
+                case JsonToken.StartObject:
+                    value = FindBestObjectMatch(reader, objectType?.GetGenericArguments() ?? new Type[0], serializer);
+                    break;
+
+                case JsonToken.StartArray:
+                    value = FindBestArrayMatch(reader, objectType, existingValue, serializer);
+                    break;
+
+                default:
+                    value = GetSimpleValue(reader, existingValue);
+                    break;
+            }
+
+            if (value is null)
+            {
+                return Activator.CreateInstance(objectType);
+            }
+
+            return Activator.CreateInstance(objectType, value);
+        }
+
+        private static object? GetSimpleValue(JsonReader reader, object existingValue)
+        {
+            var jValue = new JValue(reader.Value);
+
+            object? value;
+            switch (reader.TokenType)
+            {
+                case JsonToken.String:
+                    value = (string)jValue;
+                    break;
+
+                case JsonToken.Date:
+                    value = (DateTime)jValue;
+                    break;
+
+                case JsonToken.Boolean:
+                    value = (bool)jValue;
+                    break;
+
+                case JsonToken.Integer:
+                    value = (int)jValue;
+                    break;
+
+                case JsonToken.Float:
+                    value = (double)jValue;
+                    break;
+
+                default:
+                    value = jValue.Value;
+                    break;
+            }
+
+            if (value is null)
+            {
+                return existingValue;
+            }
+
+            return value;
+        }
+
+        private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object existingValue, JsonSerializer serializer)
+        {
+            var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? new Type[0];
+            var elementTypes = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
+
+            var list = new List<object?>();
+            Type? elementType = null;
+
+            while (reader.Read() && reader.TokenType != JsonToken.EndArray)
+            {
+                object? value;
+                if (reader.TokenType == JsonToken.StartObject)
+                {
+                    value = FindBestObjectMatch(reader, elementTypes, serializer);
+                }
+                else
+                {
+                    value = GetSimpleValue(reader, existingValue);
                 }
 
-                if (count > countOfMaxMatchingProperties)
+                if (elementType is null)
                 {
-                    countOfMaxMatchingProperties = count;
-                    mostSuitableType = knownType;
+                    elementType = value?.GetType();
+                }
+
+                list.Add(value);
+            }
+
+            if (elementType is null)
+            {
+                return null;
+            }
+
+            var typedListDetails = list.CastToTypedList(elementType);
+
+            foreach (var knownIEnumerableType in enumerableTypes)
+            {
+                if (knownIEnumerableType.GetElementTypeX() == elementType)
+                {
+                    TinyMapper.Bind(typedListDetails.ListType, knownIEnumerableType);
+                    return TinyMapper.Map(typedListDetails.ListType, knownIEnumerableType, typedListDetails.List);
                 }
             }
 
-            if (mostSuitableType != null)
+            return null;
+        }
+
+        private static object? FindBestObjectMatch(JsonReader reader, Type[] types, JsonSerializer serializer)
+        {
+            var properties = new List<PropertyDetails>();
+            var jObject = JObject.Load(reader);
+            foreach (var element in jObject)
             {
-                object target = Activator.CreateInstance(mostSuitableType);
+                var propertyDetails = new PropertyDetails
+                {
+                    CanRead = true,
+                    CanWrite = true,
+                    IsPublic = true,
+                    Name = element.Key
+                };
+
+                var val = element.Value.ToObject<object?>();
+                propertyDetails.PropertyType = val?.GetType();
+                propertyDetails.IsValueType = val?.GetType().GetTypeInfo().IsValueType == true;
+
+                properties.Add(propertyDetails);
+            }
+
+            var bestType = MatchFinder.FindBestType(properties, types);
+            if (bestType is not null)
+            {
+                var target = Activator.CreateInstance(bestType);
 
                 using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
                 {
                     serializer.Populate(jObjectReader, target);
                 }
 
-                return Activator.CreateInstance(objectType, target);
+                return target;
             }
 
-            throw new SerializationException($"Could not deserialize {objectType}, no suitable type found.");
+            return null;
         }
 
         public override bool CanConvert(Type objectType)
         {
             return objectType.FullName.StartsWith("AnyOfTypes.AnyOf`");
-        }
-
-        private HashSet<string> GetKeys(JObject obj)
-        {
-            return new HashSet<string>(((IEnumerable<KeyValuePair<string, JToken>>)obj).Select(k => k.Key));
         }
 
         private static JsonReader CopyReaderForObject(JsonReader reader, JObject jObject)
@@ -134,16 +214,6 @@ namespace RestEaseClientGeneratorConsoleApp
             jObjectReader.MaxDepth = reader.MaxDepth;
             jObjectReader.SupportMultipleContent = reader.SupportMultipleContent;
             return jObjectReader;
-        }
-
-        private static T GetPropertyValue<T>(object value, string name)
-        {
-            return (T)GetPropertyValue(value, name);
-        }
-
-        private static object GetPropertyValue(object value, string name)
-        {
-            return value.GetType().GetProperty(name).GetValue(value);
         }
     }
 }
