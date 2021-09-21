@@ -193,7 +193,7 @@ namespace AnyOfTypes.System.Text.Json
             }
 
             var currentValue = value.GetNullablePropertyValue("CurrentValue");
-            if (currentValue == null)
+            if (currentValue is null)
             {
                 writer.WriteNullValue();
                 return;
@@ -205,11 +205,6 @@ namespace AnyOfTypes.System.Text.Json
 
         public override bool CanConvert(Type objectType)
         {
-            if (objectType.FullName is null)
-            {
-                return false;
-            }
-
             return objectType.FullName.StartsWith("AnyOfTypes.AnyOf`");
         }
 

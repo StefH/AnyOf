@@ -16,7 +16,7 @@ namespace AnyOfTypes.Newtonsoft.Json
     {
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            if (value == null)
+            if (value is null)
             {
                 if (serializer.NullValueHandling == NullValueHandling.Include)
                 {
@@ -26,7 +26,7 @@ namespace AnyOfTypes.Newtonsoft.Json
             }
 
             var currentValue = value.GetNullablePropertyValue("CurrentValue");
-            if (currentValue == null)
+            if (currentValue is null)
             {
                 if (serializer.NullValueHandling == NullValueHandling.Include)
                 {

@@ -34,6 +34,7 @@ namespace AnyOfTypes.System.Text.Json.Extensions
 
             return propertyInfo.GetValue(instance);
         }
+
         public static Type GetElementTypeX(this Type enumerableType)
         {
             return enumerableType.IsArray == true ? enumerableType.GetElementType() : enumerableType.GetGenericArguments().First();
@@ -43,6 +44,7 @@ namespace AnyOfTypes.System.Text.Json.Extensions
         {
             var listType = typeof(List<>).MakeGenericType(elementType);
             var list = (IList)Activator.CreateInstance(listType);
+            
             foreach (var item in source)
             {
                 list.Add(item);
