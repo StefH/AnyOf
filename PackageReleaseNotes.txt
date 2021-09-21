@@ -1,4 +1,4 @@
-# 0.0.23 (15 September 2021)
-- #12 Add AnyOf.Newtonsoft.Json project [enhancement]
+# 0.1.0 (21 September 2021)
+- #13 Add AnyOf.System.Text.Json project [enhancement]
 
 The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md

@@ -1,3 +1,6 @@
+# 0.1.0 (21 September 2021)
+- [#13](https://github.com/StefH/AnyOf/pull/13) - Add AnyOf.System.Text.Json project [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.0.23 (15 September 2021)
 - [#12](https://github.com/StefH/AnyOf/pull/12) - Add AnyOf.Newtonsoft.Json project [enhancement] contributed by [StefH](https://github.com/StefH)
 
