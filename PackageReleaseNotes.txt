@@ -1,4 +1,4 @@
-# 0.1.0 (21 September 2021)
-- #13 Add AnyOf.System.Text.Json project [enhancement]
+# 0.2.0 (11 October 2021)
+- #14 Sign the assembly [enhancement]
 
 The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md

@@ -1,3 +1,6 @@
+# 0.2.0 (11 October 2021)
+- [#14](https://github.com/StefH/AnyOf/pull/14) - Sign the assembly [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.1.0 (21 September 2021)
 - [#13](https://github.com/StefH/AnyOf/pull/13) - Add AnyOf.System.Text.Json project [enhancement] contributed by [StefH](https://github.com/StefH)
 
