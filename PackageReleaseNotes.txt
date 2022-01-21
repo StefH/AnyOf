@@ -1,4 +1,4 @@
-# 0.2.0 (11 October 2021)
-- #14 Sign the assembly [enhancement]
+# 0.3.0 (21 January 2022)
+- #15 AnyOf.*.Json: Add support for CaseIgnore for property match [enhancement]
 
 The full release notes can be found here: https://github.com/StefH/AnyOf/blob/main/ReleaseNotes.md

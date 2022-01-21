@@ -1,3 +1,6 @@
+# 0.3.0 (21 January 2022)
+- [#15](https://github.com/StefH/AnyOf/pull/15) - AnyOf.*.Json: Add support for CaseIgnore for property match [enhancement] contributed by [StefH](https://github.com/StefH)
+
 # 0.2.0 (11 October 2021)
 - [#14](https://github.com/StefH/AnyOf/pull/14) - Sign the assembly [enhancement] contributed by [StefH](https://github.com/StefH)
 
