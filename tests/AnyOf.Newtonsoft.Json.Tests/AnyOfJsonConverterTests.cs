@@ -116,6 +116,25 @@ namespace AnyOfTypes.Newtonsoft.Json.Tests
         }
 
         [Fact]
+        public void Deserialize_AnyOf_With_ComplexTypes_DifferentCasing()
+        {
+            // Arrange
+            var expected = new A2
+            {
+                id = 1
+            };
+
+            // Act
+            var options = new JsonSerializerSettings();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonConvert.DeserializeObject<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options);
+
+            // Assert
+            result.AorB.First.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
         public void Deserialize_AnyOf_With_MixedTypes()
         {
             // Arrange

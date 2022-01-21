@@ -8,6 +8,11 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
         public AnyOf<A, B> AorB { get; set; }
     }
 
+    public class TestComplexTypes2
+    {
+        public AnyOf<A2, B> AorB { get; set; }
+    }
+
     public class TestSimpleTypes
     {
         public AnyOf<int, string> IntOrString { get; set; }
@@ -26,6 +31,11 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
     public class A
     {
         public int Id { get; set; }
+    }
+
+    public class A2
+    {
+        public int id { get; set; }
     }
 
     public class B
