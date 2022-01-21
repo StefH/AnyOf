@@ -169,7 +169,10 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
 
             // Act
-            var options = new JsonSerializerOptions();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
             options.Converters.Add(new AnyOfJsonConverter());
 
             var result = JsonSerializer.Deserialize<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options);
