@@ -13,6 +13,13 @@ namespace AnyOfTypes.System.Text.Json
 {
     public class AnyOfJsonConverter : JsonConverter<object?>
     {
+        private readonly bool _ignoreCase;
+
+        public AnyOfJsonConverter(bool ignoreCase = true)
+        {
+            _ignoreCase = ignoreCase;
+        }
+
         public override object? Read(ref Utf8JsonReader reader, Type? typeToConvert, JsonSerializerOptions options)
         {
             object? value;
@@ -144,7 +151,7 @@ namespace AnyOfTypes.System.Text.Json
             return null;
         }
 
-        private static object? FindBestObjectMatch(JsonElement objectElement, Type[] types, JsonSerializerOptions options)
+        private object? FindBestObjectMatch(JsonElement objectElement, Type[] types, JsonSerializerOptions options)
         {
             var properties = new List<PropertyDetails>();
             foreach (var element in objectElement.EnumerateObject())
@@ -175,7 +182,7 @@ namespace AnyOfTypes.System.Text.Json
                 properties.Add(propertyDetails);
             }
 
-            var mostSuitableType = MatchFinder.FindBestType(properties, types);
+            var mostSuitableType = MatchFinder.FindBestType(_ignoreCase, properties, types);
             if (mostSuitableType is not null)
             {
                 return ToObject(objectElement, mostSuitableType, options);

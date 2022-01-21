@@ -14,6 +14,13 @@ namespace AnyOfTypes.Newtonsoft.Json
 {
     public class AnyOfJsonConverter : JsonConverter
     {
+        private readonly bool _ignoreCase;
+
+        public AnyOfJsonConverter(bool ignoreCase = true)
+        {
+            _ignoreCase = ignoreCase;
+        }
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value is null)
@@ -160,7 +167,7 @@ namespace AnyOfTypes.Newtonsoft.Json
             return null;
         }
 
-        private static object? FindBestObjectMatch(JsonReader reader, Type[] types, JsonSerializer serializer)
+        private object? FindBestObjectMatch(JsonReader reader, Type[] types, JsonSerializer serializer)
         {
             var properties = new List<PropertyDetails>();
             var jObject = JObject.Load(reader);
@@ -181,7 +188,7 @@ namespace AnyOfTypes.Newtonsoft.Json
                 properties.Add(propertyDetails);
             }
 
-            var bestType = MatchFinder.FindBestType(properties, types);
+            var bestType = MatchFinder.FindBestType(_ignoreCase, properties, types);
             if (bestType is not null)
             {
                 var target = Activator.CreateInstance(bestType);

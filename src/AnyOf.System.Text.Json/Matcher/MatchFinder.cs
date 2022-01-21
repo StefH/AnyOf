@@ -9,14 +9,20 @@ namespace AnyOfTypes.System.Text.Json.Matcher
 {
     internal static class MatchFinder
     {
-        public static Type? FindBestType(IEnumerable<PropertyDetails> sourceProperties, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
+#if NETSTANDARD1_3
+        private static readonly StringComparison IgnoreCase = StringComparison.OrdinalIgnoreCase;
+#else
+        private static readonly StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
+#endif
+
+        public static Type? FindBestType(bool ignoreCase, IEnumerable<PropertyDetails> sourceProperties, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
         {
             Type? mostSuitableType = null;
             int countOfMaxMatchingProperties = -1;
 
             foreach (var targetType in targetTypes)
             {
-                var propMap = GetMatchingProperties(sourceProperties, Map(targetType.GetProperties()));
+                var propMap = GetMatchingProperties(ignoreCase, sourceProperties, Map(targetType.GetProperties()));
                 if (propMap.Count > countOfMaxMatchingProperties)
                 {
                     mostSuitableType = targetType;
@@ -27,13 +33,17 @@ namespace AnyOfTypes.System.Text.Json.Matcher
             return countOfMaxMatchingProperties == 0 && returnNullIfNoMatchFound ? null : mostSuitableType;
         }
 
-        private static IList<PropertyMap> GetMatchingProperties(IEnumerable<PropertyDetails> sourceProperties, IEnumerable<PropertyDetails> targetProperties)
+        private static IList<PropertyMap> GetMatchingProperties(
+            bool ignoreCase,
+            IEnumerable<PropertyDetails> sourceProperties,
+            IEnumerable<PropertyDetails> targetProperties)
         {
             return
             (
                 from s in sourceProperties
                 from t in targetProperties
-                where s.Name == t.Name &&
+                where
+                    ignoreCase ? string.Equals(s.Name, t.Name, IgnoreCase) : s.Name == t.Name &&
                     s.CanRead &&
                     t.CanWrite &&
                     s.IsPublic &&
@@ -50,9 +60,9 @@ namespace AnyOfTypes.System.Text.Json.Matcher
             ).ToList();
         }
 
-        public static IList<PropertyMap> GetMatchingProperties(Type sourceType, Type targetType)
+        public static IList<PropertyMap> GetMatchingProperties(bool ignoreCase, Type sourceType, Type targetType)
         {
-            return GetMatchingProperties(Map(sourceType.GetProperties()), Map(targetType.GetProperties()));
+            return GetMatchingProperties(ignoreCase, Map(sourceType.GetProperties()), Map(targetType.GetProperties()));
         }
 
         private static IEnumerable<PropertyDetails> Map(PropertyInfo[] properties)
