@@ -9,11 +9,11 @@ This project uses code generation to generate up to 10 AnyOf-types:
 - ...
 
 # Install
-## The Source Generator version:
-[![NuGet Badge](https://buildstats.info/nuget/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
-
 ## The normal version:
 [![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)
+
+## The source-generator version:
+[![NuGet Badge](https://buildstats.info/nuget/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
 
 ## AnyOf.Newtonsoft.Json
 This package can be used to serialize/deserialize (with Newtonsoft.Json) an object which contains an AnyOf-type.<br>
