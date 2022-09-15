@@ -16,6 +16,8 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
     public class TestSimpleTypes
     {
         public AnyOf<int, string> IntOrString { get; set; }
+
+        public AnyOf<int, string>? NullableIntOrString { get; set; }
     }
 
     public class TestMixedTypes

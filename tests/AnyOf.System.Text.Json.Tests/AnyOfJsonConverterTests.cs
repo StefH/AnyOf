@@ -4,6 +4,7 @@ using AnyOf.System.Text.Json.Tests.TestModels;
 using FluentAssertions;
 using Xunit;
 
+// ReSharper disable once CheckNamespace
 namespace AnyOfTypes.System.Text.Json.Tests
 {
     public class AnyOfJsonConverterTests
@@ -14,7 +15,8 @@ namespace AnyOfTypes.System.Text.Json.Tests
             // Arrange
             var test = new TestSimpleTypes
             {
-                IntOrString = 1
+                IntOrString = 1,
+                NullableIntOrString = "s"
             };
 
             // Act
@@ -27,7 +29,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var json = JsonSerializer.Serialize(test, options);
 
             // Assert
-            json.Should().Be("{\"IntOrString\":1}");
+            json.Should().Be("{\"IntOrString\":1,\"NullableIntOrString\":\"s\"}");
         }
 
         [Fact]
@@ -83,7 +85,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             // Arrange
             var test = new TestComplexArray
             {
-                X = new int[] { 42 }
+                X = new[] { 42 }
             };
 
             // Act
@@ -127,14 +129,15 @@ namespace AnyOfTypes.System.Text.Json.Tests
             // Arrange
             var expected = new TestSimpleTypes
             {
-                IntOrString = 1
+                IntOrString = 1,
+                NullableIntOrString = "s"
             };
 
             // Act
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1}", options);
+            var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1,\"NullableIntOrString\":\"s\"}", options);
 
             // Assert
             result.Should().BeEquivalentTo(expected);
@@ -153,7 +156,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
+            var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options)!;
 
             // Assert
             result.AorB.First.Should().BeEquivalentTo(expected);
@@ -175,7 +178,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             };
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options);
+            var result = JsonSerializer.Deserialize<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options)!;
 
             // Assert
             result.AorB.First.Should().BeEquivalentTo(expected);
@@ -210,7 +213,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options)!;
 
             // Assert
             result.X.First.Should().BeEquivalentTo(expected);
@@ -226,7 +229,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options)!;
 
             // Assert
             result.X.Second.Should().BeEquivalentTo(expected);
@@ -252,7 +255,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options);
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options)!;
 
             // Assert
             result.X.Third.Should().BeEquivalentTo(expected);
@@ -278,7 +281,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
             var options = new JsonSerializerOptions();
             options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Guid\":\"a\"},{\"Guid\":\"b\"}]}", options);
+            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Guid\":\"a\"},{\"Guid\":\"b\"}]}", options)!;
 
             // Assert
             result.X.Fourth.Should().BeEquivalentTo(expected);

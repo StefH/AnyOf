@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
 
-namespace AnyOfTypes.System.Text.Json.Matcher.Models
-{
-    internal struct ListDetails
-    {
-        public IList List { get; set; }
+namespace AnyOfTypes.System.Text.Json.Matcher.Models;
 
-        public Type ListType { get; set; }
-    }
+internal struct ListDetails
+{
+    public IList List { get; set; }
+
+    public Type ListType { get; set; }
 }

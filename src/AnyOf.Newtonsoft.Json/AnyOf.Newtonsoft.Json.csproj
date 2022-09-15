@@ -1,38 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <Title>AnyOf.Newtonsoft.Json</Title>
-    <TargetFrameworks>net45;netstandard1.3;netstandard2.0;netstandard2.1</TargetFrameworks>
-    <ProjectGuid>{31D0104F-3E63-4223-A4AD-372E68A6B0CB}</ProjectGuid>
-    <Description>Contains an AnyOfJsonConverter which can be used to serialize and deserialize an AnyOf&lt;TFirst, TSecond, ...&gt; type.</Description>
-    <PackageTags>AnyOf;types;AnyOfJsonConverter;JsonConverter;json;Newtonsoft</PackageTags>
-    <LangVersion>9.0</LangVersion>
-    <Nullable>enable</Nullable>
-    <RootNamespace>AnyOfTypes.Newtonsoft.Json</RootNamespace>
-  </PropertyGroup>
+    <PropertyGroup>
+        <Title>AnyOf.Newtonsoft.Json</Title>
+        <TargetFrameworks>net45;netstandard1.3;netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+        <ProjectGuid>{31D0104F-3E63-4223-A4AD-372E68A6B0CB}</ProjectGuid>
+        <Description>Contains an AnyOfJsonConverter which can be used to serialize and deserialize an AnyOf&lt;TFirst, TSecond, ...&gt; type.</Description>
+        <PackageTags>AnyOf;types;AnyOfJsonConverter;JsonConverter;json;Newtonsoft</PackageTags>
+        <LangVersion>10</LangVersion>
+        <Nullable>enable</Nullable>
+        <RootNamespace>AnyOfTypes.Newtonsoft.Json</RootNamespace>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\AnyOf.System.Text.Json\Extensions\ReflectionHelpers.cs" Link="Extensions\ReflectionHelpers.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Matcher\MatchFinder.cs" Link="Matcher\MatchFinder.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Models\ListDetails.cs" Link="Models\ListDetails.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyDetails.cs" Link="Models\PropertyDetails.cs" />
-    <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyMap.cs" Link="Models\PropertyMap.cs" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\AnyOf.System.Text.Json\Extensions\ReflectionHelpers.cs" Link="Extensions\ReflectionHelpers.cs" />
+        <Compile Include="..\AnyOf.System.Text.Json\Matcher\MatchFinder.cs" Link="Matcher\MatchFinder.cs" />
+        <Compile Include="..\AnyOf.System.Text.Json\Models\ListDetails.cs" Link="Models\ListDetails.cs" />
+        <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyDetails.cs" Link="Models\PropertyDetails.cs" />
+        <Compile Include="..\AnyOf.System.Text.Json\Models\PropertyMap.cs" Link="Models\PropertyMap.cs" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="TinyMapper" Version="3.0.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+        <PackageReference Include="TinyMapper" Version="3.0.3" />
+    </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
-  </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+        <PackageReference Include="System.Reflection" Version="4.3.0" />
+        <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
+        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Models\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Extensions\" />
+        <Folder Include="Models\" />
+    </ItemGroup>
 
 </Project>
