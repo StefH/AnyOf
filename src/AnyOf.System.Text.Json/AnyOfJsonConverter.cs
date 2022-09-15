@@ -11,7 +11,7 @@ using Nelibur.ObjectMapper;
 
 namespace AnyOfTypes.System.Text.Json;
 
-public class AnyOfJsonConverter : JsonConverter<object?>
+public class AnyOfJsonConverter : JsonConverter<object>
 {
     private readonly bool _ignoreCase;
 
