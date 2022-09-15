@@ -10,6 +10,30 @@ namespace AnyOfTypes.System.Text.Json.Tests
     public class AnyOfJsonConverterTests
     {
         [Fact]
+        public void Serialize_AnyOf_With_List()
+        {
+            // Arrange
+            var test = new TestList
+            {
+                //List = new List<AnyOf<int, string>> { 1, "s" },
+                NullableList = new List<AnyOf<int, string>> { 2, "a" },
+                //ListWithNullable = new List<AnyOf<int, string>?> { 3, "n", null }
+            };
+
+            // Act
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = false
+            };
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var json = JsonSerializer.Serialize(test, options);
+
+            // Assert
+            json.Should().Be("{\"List\":[1,\"s\"],\"NullableList\":[2,\"a\"],\"ListWithNullable\":[3,\"n\",null]}");
+        }
+
+        [Fact]
         public void Serialize_AnyOf_With_SimpleTypes()
         {
             // Arrange
@@ -124,6 +148,27 @@ namespace AnyOfTypes.System.Text.Json.Tests
         }
 
         [Fact]
+        public void Deserialize_AnyOf_With_List()
+        {
+            // Arrange
+            var expected = new TestList
+            {
+                List = new List<AnyOf<int, string>> { 1, "s" },
+                NullableList = new List<AnyOf<int, string>> { 2, "a" },
+                ListWithNullable = new List<AnyOf<int, string>?> { 3, "n", null }
+            };
+
+            // Act
+            var options = new JsonSerializerOptions();
+            options.Converters.Add(new AnyOfJsonConverter());
+
+            var result = JsonSerializer.Deserialize<TestList>("{\"List\":[1,\"s\"],\"NullableList\":[2,\"a\"],\"ListWithNullable\":[3,\"n\",null]}", options);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
         public void Deserialize_AnyOf_With_SimpleTypes()
         {
             // Arrange
@@ -207,7 +252,7 @@ namespace AnyOfTypes.System.Text.Json.Tests
         public void Deserialize_AnyOf_With_IntArray()
         {
             // Arrange
-            var expected = new int[] { 42 };
+            var expected = new[] { 42 };
 
             // Act
             var options = new JsonSerializerOptions();

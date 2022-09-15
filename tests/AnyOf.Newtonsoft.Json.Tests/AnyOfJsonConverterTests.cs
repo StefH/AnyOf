@@ -10,6 +10,30 @@ namespace AnyOfTypes.Newtonsoft.Json.Tests;
 public class AnyOfJsonConverterTests
 {
     [Fact]
+    public void Serialize_AnyOf_With_List()
+    {
+        // Arrange
+        var test = new TestList
+        {
+            List = new List<AnyOf<int, string>> { 1, "s" },
+            NullableList = new List<AnyOf<int, string>> { 2, "a" },
+            ListWithNullable = new List<AnyOf<int, string>?> { 3, "n", null }
+        };
+
+        // Act
+        var options = new JsonSerializerSettings
+        {
+            Formatting = Formatting.None
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = JsonConvert.SerializeObject(test, options);
+
+        // Assert
+        json.Should().Be("{\"List\":[1,\"s\"],\"NullableList\":[2,\"a\"],\"ListWithNullable\":[3,\"n\",null]}");
+    }
+
+    [Fact]
     public void Serialize_AnyOf_With_SimpleTypes()
     {
         // Arrange
@@ -77,6 +101,27 @@ public class AnyOfJsonConverterTests
 
         // Assert
         json.Should().Be("{\"IntOrStringOrAOrB\":1}");
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_List()
+    {
+        // Arrange
+        var expected = new TestList
+        {
+            List = new List<AnyOf<int, string>> { 1, "s" },
+            NullableList = new List<AnyOf<int, string>> { 2, "a" },
+            ListWithNullable = new List<AnyOf<int, string>?> { 3, "n", null }
+        };
+
+        // Act
+        var options = new JsonSerializerSettings();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var result = JsonConvert.DeserializeObject<TestList>("{\"List\":[1,\"s\"],\"NullableList\":[2,\"a\"],\"ListWithNullable\":[3,\"n\",null]}", options);
+
+        // Assert
+        result.Should().BeEquivalentTo(expected);
     }
 
     [Fact]

@@ -30,6 +30,15 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
         public AnyOf<int[], List<string>, List<A>, IEnumerable<B>> X { get; set; }
     }
 
+    public class TestList
+    {
+        public List<AnyOf<int, string>> List { get; set; }
+
+        public List<AnyOf<int, string>>? NullableList { get; set; }
+
+        public List<AnyOf<int, string>?> ListWithNullable { get; set; }
+    }
+
     public class A
     {
         public int Id { get; set; }
