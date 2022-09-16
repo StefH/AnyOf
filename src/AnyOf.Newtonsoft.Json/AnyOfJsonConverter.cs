@@ -60,7 +60,7 @@ public class AnyOfJsonConverter : JsonConverter
                 break;
 
             case JsonToken.StartObject:
-                value = FindBestObjectMatch(reader, objectType.GetGenericArguments() ?? Type.EmptyTypes, serializer);
+                value = FindBestObjectMatch(reader, objectType.GetGenericArguments(), serializer);
                 break;
 
             case JsonToken.StartArray:
@@ -120,10 +120,23 @@ public class AnyOfJsonConverter : JsonConverter
         return value;
     }
 
-    private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object? existingValue, JsonSerializer serializer)
+    private object? FindBestArrayMatch(JsonReader reader, Type arrayTypeToConvert, object? existingValue, JsonSerializer serializer)
     {
-        var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? Type.EmptyTypes;
-        var elementTypes = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
+        var arrayTypeToConvertNonNullable = arrayTypeToConvert.GetNonNullableType();
+        var enumerableTypes = arrayTypeToConvertNonNullable.GetGenericArguments()
+            .Where(t => typeof(IEnumerable).IsAssignableFrom(t))
+            .ToArray();
+        var elementTypes = new List<Type>();
+        foreach (var enumerableType in enumerableTypes)
+        {
+            var elementTypeX = enumerableType.GetElementTypeX();
+            if (elementTypeX is not null)
+            {
+                elementTypes.Add(elementTypeX);
+            }
+        }
+
+        // var elementTypes = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
 
         var list = new List<object?>();
         Type? elementType = null;
@@ -167,7 +180,7 @@ public class AnyOfJsonConverter : JsonConverter
         return null;
     }
 
-    private object? FindBestObjectMatch(JsonReader reader, Type[] types, JsonSerializer serializer)
+    private object? FindBestObjectMatch(JsonReader reader, IReadOnlyList<Type> types, JsonSerializer serializer)
     {
         var properties = new List<PropertyDetails>();
         var jObject = JObject.Load(reader);

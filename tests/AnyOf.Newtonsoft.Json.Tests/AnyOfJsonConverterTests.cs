@@ -40,7 +40,8 @@ public class AnyOfJsonConverterTests
         var test = new TestSimpleTypes
         {
             IntOrString = 1,
-            NullableIntOrString = "s"
+            NullableIntOrString = "s",
+            NullableStringOrStrings = new[] { "a", "b" }
         };
 
         // Act
@@ -53,7 +54,7 @@ public class AnyOfJsonConverterTests
         var json = JsonConvert.SerializeObject(test, options);
 
         // Assert
-        json.Should().Be("{\"IntOrString\":1,\"NullableIntOrString\":\"s\"}");
+        json.Should().Be("{\"IntOrString\":1,\"NullableIntOrString\":\"s\",\"NullableStringOrStrings\":[\"a\",\"b\"]}");
     }
 
     [Fact]
@@ -128,20 +129,25 @@ public class AnyOfJsonConverterTests
     public void Deserialize_AnyOf_With_SimpleTypes()
     {
         // Arrange
+        var json = "{\"IntOrString\":1,\"NullableIntOrString\":\"s\",\"NullableStringOrStrings\":[\"a\",\"b\"]}";
+        var array = new[] { "a", "b" };
         var expected = new TestSimpleTypes
         {
             IntOrString = 1,
-            NullableIntOrString = "s"
+            NullableIntOrString = "s",
+            NullableStringOrStrings = array
         };
 
         // Act
         var options = new JsonSerializerSettings();
         options.Converters.Add(new AnyOfJsonConverter());
 
-        var result = JsonConvert.DeserializeObject<TestSimpleTypes>("{\"IntOrString\":1,\"NullableIntOrString\":\"s\"}", options);
+        var result = JsonConvert.DeserializeObject<TestSimpleTypes>(json, options)!;
 
         // Assert
-        result.Should().BeEquivalentTo(expected);
+        result.IntOrString.Should().Be(expected.IntOrString);
+        result.NullableIntOrString.Should().Be(expected.NullableIntOrString);
+        result.NullableStringOrStrings!.Value.Second.Should().Contain(array);
     }
 
     [Fact]

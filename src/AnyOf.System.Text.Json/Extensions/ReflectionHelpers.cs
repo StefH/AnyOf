@@ -50,9 +50,9 @@ internal static class ReflectionHelpers
         return propertyInfo.GetValue(instance);
     }
 
-    public static Type GetElementTypeX(this Type enumerableType)
+    public static Type? GetElementTypeX(this Type enumerableType)
     {
-        return enumerableType.IsArray ? enumerableType.GetElementType()! : enumerableType.GetGenericArguments().First();
+        return enumerableType.IsArray ? enumerableType.GetElementType()! : enumerableType.GetGenericArguments().FirstOrDefault();
     }
 
     public static ListDetails CastToTypedList(this IList source, Type elementType)

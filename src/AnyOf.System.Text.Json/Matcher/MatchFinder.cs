@@ -15,7 +15,7 @@ internal static class MatchFinder
     private static readonly StringComparison IgnoreCase = StringComparison.InvariantCultureIgnoreCase;
 #endif
 
-    public static Type? FindBestType(bool ignoreCase, IReadOnlyList<PropertyDetails> sourceProperties, Type[] targetTypes, bool returnNullIfNoMatchFound = true)
+    public static Type? FindBestType(bool ignoreCase, IReadOnlyList<PropertyDetails> sourceProperties, IReadOnlyList<Type> targetTypes, bool returnNullIfNoMatchFound = true)
     {
         Type? mostSuitableType = null;
         int countOfMaxMatchingProperties = -1;
