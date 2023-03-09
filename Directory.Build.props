@@ -1,23 +1,24 @@
 <Project>
-    <PropertyGroup>
-        <MsBuildAllProjects>$(MsBuildAllProjects);$(MsBuildThisFileFullPath)</MsBuildAllProjects>
-    </PropertyGroup>
+  <PropertyGroup>
+    <MsBuildAllProjects>$(MsBuildAllProjects);$(MsBuildThisFileFullPath)</MsBuildAllProjects>
+  </PropertyGroup>
 
-    <PropertyGroup>
-        <Version>0.3.0</Version>
-        <Authors>Stef Heyenrath</Authors>
-        <LangVersion>9</LangVersion>
-        <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
-        <PackageTags>AnyOf;types</PackageTags>
+  <PropertyGroup>
+    <Version>0.4.0-preview-01</Version>
+    <Authors>Stef Heyenrath</Authors>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
+    <Description>Use the AnyOf&lt;TFirst, TSecond, ...&gt; type to handle multiple defined types as input parameters for methods.</Description>
+    <PackageTags>AnyOf;types</PackageTags>
 
-        <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../PackageReleaseNotes.txt"))</PackageReleaseNotes>
-        <PackageProjectUrl>https://github.com/StefH/AnyOf</PackageProjectUrl>
-        <RepositoryType>git</RepositoryType>
-        <RepositoryUrl>https://github.com/StefH/AnyOf</RepositoryUrl>
-    </PropertyGroup>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../../PackageReleaseNotes.txt"))</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/StefH/AnyOf</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/StefH/AnyOf</RepositoryUrl>
+  </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
 </Project>

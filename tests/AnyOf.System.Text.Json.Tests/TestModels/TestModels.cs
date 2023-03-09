@@ -18,6 +18,11 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
         public AnyOf<int, string> IntOrString { get; set; }
     }
 
+    public class TestNullableTypes
+    {
+        public AnyOf<int?, string?> NullableIntOrString { get; set; }
+    }
+
     public class TestMixedTypes
     {
         public AnyOf<int, string, A, B> IntOrStringOrAOrB { get; set; }
