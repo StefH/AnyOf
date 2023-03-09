@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using AnyOf.System.Text.Json.Tests.TestModels;
+using AnyOfTypes.System.Text.Json;
 using FluentAssertions;
 using Xunit;
 
-namespace AnyOfTypes.System.Text.Json.Tests
+namespace AnyOf.System.Text.Json.Tests
 {
     public class AnyOfJsonConverterTests
     {

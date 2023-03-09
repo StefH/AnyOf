@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using AnyOf.System.Text.Json.Tests.TestModels;
+using AnyOfTypes.Newtonsoft.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace AnyOfTypes.Newtonsoft.Json.Tests
+namespace AnyOf.Newtonsoft.Json.Tests
 {
     public class AnyOfJsonConverterTests
     {
