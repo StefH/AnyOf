@@ -28,8 +28,8 @@ namespace AnyOfTypes
         private readonly TFirst _first;
         private readonly TSecond _second;
 
-        public readonly AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second };
-        public readonly Type[] Types => new [] { typeof(TFirst), typeof(TSecond) };
+        public readonly AnyOfType[] AnyOfTypes => new[] { AnyOfType.First, AnyOfType.Second };
+        public readonly Type[] Types => new[] { typeof(TFirst), typeof(TSecond) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
@@ -52,8 +52,8 @@ namespace AnyOfTypes
         {
             get
             {
-               Validate(AnyOfType.First);
-               return _first;
+                Validate(AnyOfType.First);
+                return _first;
             }
         }
 
@@ -75,8 +75,8 @@ namespace AnyOfTypes
         {
             get
             {
-               Validate(AnyOfType.Second);
-               return _second;
+                Validate(AnyOfType.Second);
+                return _second;
             }
         }
 
@@ -92,7 +92,7 @@ namespace AnyOfTypes
         {
             get
             {
-               return _currentType;
+                return _currentType;
             }
         }
 
@@ -100,7 +100,7 @@ namespace AnyOfTypes
         {
             get
             {
-               return _currentValue;
+                return _currentValue;
             }
         }
 
@@ -108,7 +108,7 @@ namespace AnyOfTypes
         {
             get
             {
-               return _currentValueType;
+                return _currentValueType;
             }
         }
 
@@ -163,12 +163,18 @@ namespace AnyOfTypes
 
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return sourceType == typeof(AnyOf<TFirst, TSecond>) ||_theType.Value.Types.Contains(sourceType);
+            return
+                sourceType == typeof(AnyOf<TFirst, TSecond>) ||
+                _theType.Value.Types.Contains(sourceType) ||
+                base.CanConvertFrom(context, sourceType);
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return destinationType == typeof(AnyOf<TFirst, TSecond>) || _theType.Value.Types.Contains(destinationType);
+            return
+                destinationType == typeof(AnyOf<TFirst, TSecond>) ||
+                _theType.Value.Types.Contains(destinationType) ||
+                base.CanConvertTo(context, destinationType);
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -204,19 +210,14 @@ namespace AnyOfTypes
                 return null;
             }
 
-            if (destinationType == typeof(AnyOf<TFirst, TSecond>))
+            if (value is TFirst first)
             {
-                return value;
+                return new AnyOf<TFirst, TSecond>(first);
             }
 
-            if (destinationType == typeof(TFirst))
+            if (value is TSecond second)
             {
-                return new AnyOf<TFirst, TSecond>((TFirst) value);
-            }
-
-            if (destinationType == typeof(TSecond))
-            {
-                return new AnyOf<TFirst, TSecond>((TSecond) value);
+                return new AnyOf<TFirst, TSecond>(second);
             }
 
             if (value is AnyOf<TFirst, TSecond> anyOfValue)
@@ -236,7 +237,7 @@ namespace AnyOfTypes
                     return anyOfValue.Second;
                 }
             }
-            
+
             // Fall back to the base implementation if the value cannot be converted.
             return base.ConvertTo(context, culture, value, destinationType);
         }
