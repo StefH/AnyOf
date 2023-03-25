@@ -10,6 +10,9 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 
 namespace AnyOfTypes
 {
@@ -151,6 +154,91 @@ namespace AnyOfTypes
         public override string ToString()
         {
             return IsUndefined ? null : $"{_currentValue}";
+        }
+    }
+
+    public class AnyOfConverter<TFirst, TSecond> : TypeConverter
+    {
+        private readonly Lazy<AnyOf<TFirst, TSecond>> _theType = new Lazy<AnyOf<TFirst, TSecond>>(() => new AnyOf<TFirst, TSecond>());
+
+        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+        {
+            return sourceType == typeof(AnyOf<TFirst, TSecond>) ||_theType.Value.Types.Contains(sourceType);
+        }
+
+        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
+        {
+            return destinationType == typeof(AnyOf<TFirst, TSecond>) || _theType.Value.Types.Contains(destinationType);
+        }
+
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            if (value == null)
+            {
+                return null;
+            }
+
+            if (value is AnyOf<TFirst, TSecond> anyOfValue)
+            {
+                return anyOfValue;
+            }
+
+            if (value is TFirst first)
+            {
+                return new AnyOf<TFirst, TSecond>(first);
+            }
+
+            if (value is TSecond second)
+            {
+                return new AnyOf<TFirst, TSecond>(second);
+            }
+
+            // Fall back to the base implementation if the value cannot be converted.
+            return base.ConvertFrom(context, culture, value);
+        }
+
+        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+        {
+            if (value is null)
+            {
+                return null;
+            }
+
+            if (destinationType == typeof(AnyOf<TFirst, TSecond>))
+            {
+                return value;
+            }
+
+            if (destinationType == typeof(TFirst))
+            {
+                return new AnyOf<TFirst, TSecond>((TFirst) value);
+            }
+
+            if (destinationType == typeof(TSecond))
+            {
+                return new AnyOf<TFirst, TSecond>((TSecond) value);
+            }
+
+            if (value is AnyOf<TFirst, TSecond> anyOfValue)
+            {
+                if (destinationType == typeof(AnyOf<TFirst, TSecond>))
+                {
+                    return value;
+                }
+
+                if (destinationType == typeof(TFirst))
+                {
+                    return anyOfValue.First;
+                }
+
+                if (destinationType == typeof(TSecond))
+                {
+                    return anyOfValue.Second;
+                }
+            }
+            
+            // Fall back to the base implementation if the value cannot be converted.
+            return base.ConvertTo(context, culture, value, destinationType);
         }
     }
 }
