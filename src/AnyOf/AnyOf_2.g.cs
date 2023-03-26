@@ -10,12 +10,9 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 
 namespace AnyOfTypes
 {
-    [TypeConverter(typeof(AnyOfConverter<,>))]
     [DebuggerDisplay("{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
     public struct AnyOf<TFirst, TSecond> : IEquatable<AnyOf<TFirst, TSecond>>
     {
@@ -52,8 +49,8 @@ namespace AnyOfTypes
         {
             get
             {
-                Validate(AnyOfType.First);
-                return _first;
+               Validate(AnyOfType.First);
+               return _first;
             }
         }
 
@@ -75,8 +72,8 @@ namespace AnyOfTypes
         {
             get
             {
-                Validate(AnyOfType.Second);
-                return _second;
+               Validate(AnyOfType.Second);
+               return _second;
             }
         }
 
@@ -92,7 +89,7 @@ namespace AnyOfTypes
         {
             get
             {
-                return _currentType;
+               return _currentType;
             }
         }
 
@@ -100,7 +97,7 @@ namespace AnyOfTypes
         {
             get
             {
-                return _currentValue;
+               return _currentValue;
             }
         }
 
@@ -108,7 +105,7 @@ namespace AnyOfTypes
         {
             get
             {
-                return _currentValueType;
+               return _currentValueType;
             }
         }
 
@@ -132,8 +129,8 @@ namespace AnyOfTypes
             return _currentType == other._currentType &&
                    _numberOfTypes == other._numberOfTypes &&
                    EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&
-            EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
-            EqualityComparer<TSecond>.Default.Equals(_second, other._second);
+                    EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
+                    EqualityComparer<TSecond>.Default.Equals(_second, other._second);
         }
 
         public static bool operator ==(AnyOf<TFirst, TSecond> obj1, AnyOf<TFirst, TSecond> obj2)

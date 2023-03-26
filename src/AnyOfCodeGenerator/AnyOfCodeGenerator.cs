@@ -353,9 +353,11 @@ public class AnyOfCodeGenerator : ISourceGenerator
             case OutputType.Console:
                 Console.WriteLine(code);
                 break;
+
             case OutputType.File:
                 File.WriteAllText(Path.Combine(options.Folder, filename), code);
                 break;
+
             default:
                 context?.AddSource(filename, SourceText.From(code, Encoding.UTF8));
                 break;

@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace AnyOfTypes
 {
     [DebuggerDisplay("{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
-    public struct AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh>
+    public struct AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> : IEquatable<AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh>>
     {
         private readonly string _thisType => $"AnyOf<{typeof(TFirst).Name}, {typeof(TSecond).Name}, {typeof(TThird).Name}, {typeof(TFourth).Name}, {typeof(TFifth).Name}, {typeof(TSixth).Name}, {typeof(TSeventh).Name}>";
         private readonly int _numberOfTypes;
@@ -30,8 +30,8 @@ namespace AnyOfTypes
         private readonly TSixth _sixth;
         private readonly TSeventh _seventh;
 
-        public readonly AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third, AnyOfType.Fourth, AnyOfType.Fifth, AnyOfType.Sixth, AnyOfType.Seventh };
-        public readonly Type[] Types => new [] { typeof(TFirst), typeof(TSecond), typeof(TThird), typeof(TFourth), typeof(TFifth), typeof(TSixth), typeof(TSeventh) };
+        public readonly AnyOfType[] AnyOfTypes => new[] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third, AnyOfType.Fourth, AnyOfType.Fifth, AnyOfType.Sixth, AnyOfType.Seventh };
+        public readonly Type[] Types => new[] { typeof(TFirst), typeof(TSecond), typeof(TThird), typeof(TFourth), typeof(TFifth), typeof(TSixth), typeof(TSeventh) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
@@ -294,28 +294,28 @@ namespace AnyOfTypes
             return HashCodeCalculator.GetHashCode(fields);
         }
 
-        private bool Equals(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> other)
+        public bool Equals(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> other)
         {
             return _currentType == other._currentType &&
                    _numberOfTypes == other._numberOfTypes &&
                    EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&
-            EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
-            EqualityComparer<TSecond>.Default.Equals(_second, other._second) &&
-            EqualityComparer<TThird>.Default.Equals(_third, other._third) &&
-            EqualityComparer<TFourth>.Default.Equals(_fourth, other._fourth) &&
-            EqualityComparer<TFifth>.Default.Equals(_fifth, other._fifth) &&
-            EqualityComparer<TSixth>.Default.Equals(_sixth, other._sixth) &&
-            EqualityComparer<TSeventh>.Default.Equals(_seventh, other._seventh);
+                    EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
+                    EqualityComparer<TSecond>.Default.Equals(_second, other._second) &&
+                    EqualityComparer<TThird>.Default.Equals(_third, other._third) &&
+                    EqualityComparer<TFourth>.Default.Equals(_fourth, other._fourth) &&
+                    EqualityComparer<TFifth>.Default.Equals(_fifth, other._fifth) &&
+                    EqualityComparer<TSixth>.Default.Equals(_sixth, other._sixth) &&
+                    EqualityComparer<TSeventh>.Default.Equals(_seventh, other._seventh);
         }
 
         public static bool operator ==(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> obj1, AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> obj2)
         {
-            return obj1.Equals(obj2);
+            return EqualityComparer<AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh>>.Default.Equals(obj1, obj2);
         }
 
         public static bool operator !=(AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> obj1, AnyOf<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh> obj2)
         {
-            return !obj1.Equals(obj2);
+            return !(obj1 == obj2);
         }
 
         public override bool Equals(object obj)
