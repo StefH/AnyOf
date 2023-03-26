@@ -12,7 +12,7 @@ class Program
         generator.Generate(new OutputOptions
         {
             Type = OutputType.File,
-            SupportsNullable= false,
+            SupportsNullable = false,
             Folder = "../../../../AnyOf"
         });
     }

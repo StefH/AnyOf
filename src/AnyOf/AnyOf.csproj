@@ -6,6 +6,7 @@
     <ProjectGuid>{32A113EF-DA46-4016-AA14-F3DC6ACDC20E}</ProjectGuid>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>AnyOf.snk</AssemblyOriginatorKeyFile>
+    <RootNamespace>AnyOfTypes</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.0'">

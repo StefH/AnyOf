@@ -317,7 +317,7 @@ public class AnyOfCodeGenerator : ISourceGenerator
 
         sb.AppendLine($"        public static bool operator ==(AnyOf<{genericTypesAsCommaSeparatedString}> obj1, AnyOf<{genericTypesAsCommaSeparatedString}> obj2)");
         sb.AppendLine("        {");
-        sb.AppendLine($"            EqualityComparer<AnyOf<{genericTypesAsCommaSeparatedString}>>.Default.Equals(obj1, obj2);");
+        sb.AppendLine($"            return EqualityComparer<AnyOf<{genericTypesAsCommaSeparatedString}>>.Default.Equals(obj1, obj2);");
         sb.AppendLine("        }");
         sb.AppendLine();
 
