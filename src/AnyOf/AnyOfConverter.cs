@@ -6,17 +6,17 @@ namespace AnyOfTypes;
 
 public class AnyOfConverter<TFirst, TSecond> : TypeConverter
 {
-    public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
     {
         return sourceType == typeof(AnyOf<TFirst, TSecond>) || sourceType == typeof(TFirst) || sourceType == typeof(TSecond) || base.CanConvertFrom(context, sourceType);
     }
 
-    public override bool CanConvertTo(ITypeDescriptorContext context, Type? destinationType)
+    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType)
     {
         return destinationType != null && (destinationType == typeof(AnyOf<TFirst, TSecond>) || destinationType == typeof(TFirst) || destinationType == typeof(TSecond) || base.CanConvertTo(context, destinationType));
     }
 
-    public override object? ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object? value)
+    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object? value)
     {
         if (value == null)
         {
@@ -42,7 +42,7 @@ public class AnyOfConverter<TFirst, TSecond> : TypeConverter
         return base.ConvertFrom(context, culture, value);
     }
 
-    public override object? ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object? value, Type destinationType)
+    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType)
     {
         if (value is null)
         {
