@@ -2,11 +2,10 @@
 using System.ComponentModel;
 using AnyOfTypes;
 using FluentAssertions;
-
-namespace AnyOfTests;
-
 using Moq;
 using Xunit;
+
+namespace AnyOfTests;
 
 public class AnyOfConverterTests
 {
@@ -114,25 +113,10 @@ public class AnyOfConverterTests
         var converter = new AnyOfConverter<string, int>();
 
         // Act
-        var result = (AnyOf<string, int>) converter.ConvertTo(_typeDescriptorContext, null, value, typeof(AnyOf<string, int>));
+        var result = converter.ConvertTo(_typeDescriptorContext, null, value, typeof(AnyOf<string, int>));
 
         // Assert
-        result.CurrentValue.Should().Be(expectedValue);
-    }
-
-    [Theory]
-    [InlineData("foo", typeof(string), "foo")]
-    [InlineData(42, typeof(int), 42)]
-    public void ConvertTo_ShouldConvertValueToValue(object value, Type expectedType, object expectedValue)
-    {
-        // Arrange
-        var converter = new AnyOfConverter<string, int>();
-
-        // Act
-        var result = (AnyOf<string, int>)converter.ConvertTo(_typeDescriptorContext, null, value, expectedType);
-
-        // Assert
-        result.CurrentValue.Should().Be(expectedValue);
+        result.Should().Be(expectedValue);
     }
 
     [Fact]

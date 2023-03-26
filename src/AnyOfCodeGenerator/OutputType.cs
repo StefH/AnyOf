@@ -1,11 +1,10 @@
-﻿namespace AnyOf.SourceGenerator
+﻿namespace AnyOf.SourceGenerator;
+
+public enum OutputType
 {
-    public enum OutputType
-    {
-        Context = 0,
+    Context = 0,
 
-        Console,
+    Console,
 
-        File
-    }
+    File
 }

@@ -16,8 +16,9 @@ using System.Linq;
 
 namespace AnyOfTypes
 {
+    [TypeConverter(typeof(AnyOfConverter<,>))]
     [DebuggerDisplay("{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
-    public struct AnyOf<TFirst, TSecond>
+    public struct AnyOf<TFirst, TSecond> : IEquatable<AnyOf<TFirst, TSecond>>
     {
         private readonly string _thisType => $"AnyOf<{typeof(TFirst).Name}, {typeof(TSecond).Name}>";
         private readonly int _numberOfTypes;
@@ -127,7 +128,7 @@ namespace AnyOfTypes
             return HashCodeCalculator.GetHashCode(fields);
         }
 
-        private bool Equals(AnyOf<TFirst, TSecond> other)
+        public bool Equals(AnyOf<TFirst, TSecond> other)
         {
             return _currentType == other._currentType &&
                    _numberOfTypes == other._numberOfTypes &&
@@ -138,12 +139,12 @@ namespace AnyOfTypes
 
         public static bool operator ==(AnyOf<TFirst, TSecond> obj1, AnyOf<TFirst, TSecond> obj2)
         {
-            return obj1.Equals(obj2);
+            return EqualityComparer<AnyOf<TFirst, TSecond>>.Default.Equals(obj1, obj2);
         }
 
         public static bool operator !=(AnyOf<TFirst, TSecond> obj1, AnyOf<TFirst, TSecond> obj2)
         {
-            return !obj1.Equals(obj2);
+            return !(obj1 == obj2);
         }
 
         public override bool Equals(object obj)
@@ -159,22 +160,14 @@ namespace AnyOfTypes
 
     public class AnyOfConverter<TFirst, TSecond> : TypeConverter
     {
-        private readonly Lazy<AnyOf<TFirst, TSecond>> _theType = new Lazy<AnyOf<TFirst, TSecond>>(() => new AnyOf<TFirst, TSecond>());
-
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return
-                sourceType == typeof(AnyOf<TFirst, TSecond>) ||
-                _theType.Value.Types.Contains(sourceType) ||
-                base.CanConvertFrom(context, sourceType);
+            return sourceType == typeof(AnyOf<TFirst, TSecond>) || sourceType == typeof(TFirst) || sourceType == typeof(TSecond) || base.CanConvertFrom(context, sourceType);
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return
-                destinationType == typeof(AnyOf<TFirst, TSecond>) ||
-                _theType.Value.Types.Contains(destinationType) ||
-                base.CanConvertTo(context, destinationType);
+            return destinationType != null && (destinationType == typeof(AnyOf<TFirst, TSecond>) || destinationType == typeof(TFirst) || destinationType == typeof(TSecond) || base.CanConvertTo(context, destinationType));
         }
 
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -210,33 +203,38 @@ namespace AnyOfTypes
                 return null;
             }
 
-            if (value is TFirst first)
+            if (destinationType == typeof(AnyOf<TFirst, TSecond>))
             {
-                return new AnyOf<TFirst, TSecond>(first);
+                return value;
             }
 
-            if (value is TSecond second)
+            if (destinationType == typeof(TFirst))
             {
-                return new AnyOf<TFirst, TSecond>(second);
+                return ((AnyOf<TFirst, TSecond>)value).First;
             }
 
-            if (value is AnyOf<TFirst, TSecond> anyOfValue)
+            if (destinationType == typeof(TSecond))
             {
-                if (destinationType == typeof(AnyOf<TFirst, TSecond>))
-                {
-                    return value;
-                }
-
-                if (destinationType == typeof(TFirst))
-                {
-                    return anyOfValue.First;
-                }
-
-                if (destinationType == typeof(TSecond))
-                {
-                    return anyOfValue.Second;
-                }
+                return ((AnyOf<TFirst, TSecond>)value).Second;
             }
+
+            //if (value is AnyOf<TFirst, TSecond> anyOfValue)
+            //{
+            //    if (destinationType == typeof(AnyOf<TFirst, TSecond>))
+            //    {
+            //        return value;
+            //    }
+
+            //    if (destinationType == typeof(TFirst))
+            //    {
+            //        return anyOfValue.First;
+            //    }
+
+            //    if (destinationType == typeof(TSecond))
+            //    {
+            //        return anyOfValue.Second;
+            //    }
+            //}
 
             // Fall back to the base implementation if the value cannot be converted.
             return base.ConvertTo(context, culture, value, destinationType);

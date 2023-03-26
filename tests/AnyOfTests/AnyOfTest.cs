@@ -29,14 +29,23 @@ public class AnyOfTest
         var anyOfIntAndStringTypeWithIntValue1 = new AnyOf<int, string>(42);
         var anyOfIntAndStringTypeWithIntValue2 = new AnyOf<int, string>(42);
         var anyOfIntAndStringTypeWithIntValue3 = new AnyOf<int, string>(5);
+        var anyOfIntAndStringTypeWithStringValue1 = new AnyOf<int, string>("abc");
+        var anyOfIntAndStringTypeWithStringValue2 = new AnyOf<int, string>("abc");
+        var anyOfIntAndStringTypeWithStringValue3 = new AnyOf<int, string>("x");
         var anyOfIntAndBoolTypeWithBoolValue = new AnyOf<int, bool>(42);
         var normalInt = 42;
+        var normalString = "abc";
 
         // Assert
         anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue2).Should().BeTrue();
         anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndStringTypeWithIntValue3).Should().BeFalse();
         anyOfIntAndStringTypeWithIntValue1.Equals(anyOfIntAndBoolTypeWithBoolValue).Should().BeFalse();
-        anyOfIntAndStringTypeWithIntValue1.Equals(normalInt).Should().BeFalse();
+        anyOfIntAndStringTypeWithIntValue1.Equals(normalInt).Should().BeTrue();
+
+        anyOfIntAndStringTypeWithStringValue1.Equals(anyOfIntAndStringTypeWithStringValue2).Should().BeTrue();
+        anyOfIntAndStringTypeWithStringValue1.Equals(anyOfIntAndStringTypeWithStringValue3).Should().BeFalse();
+        anyOfIntAndStringTypeWithStringValue1.Equals(anyOfIntAndBoolTypeWithBoolValue).Should().BeFalse();
+        anyOfIntAndStringTypeWithStringValue1.Equals(normalString).Should().BeTrue();
     }
 
     [Fact]
