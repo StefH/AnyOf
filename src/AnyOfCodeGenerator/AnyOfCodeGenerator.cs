@@ -226,7 +226,7 @@ public class AnyOfCodeGenerator : ISourceGenerator
         sb.AppendLine("{");
 
         sb.AppendLine("    [DebuggerDisplay(\"{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'\")]");
-        sb.AppendLine($"    public struct AnyOf<{genericTypesAsCommaSeparatedString}> : IEquatable<AnyOf<{genericTypesAsCommaSeparatedString}>");
+        sb.AppendLine($"    public struct AnyOf<{genericTypesAsCommaSeparatedString}> : IEquatable<AnyOf<{genericTypesAsCommaSeparatedString}>>");
         sb.AppendLine("    {");
 
         sb.AppendLine($"        private readonly string _thisType => $\"{thisType}\";");
