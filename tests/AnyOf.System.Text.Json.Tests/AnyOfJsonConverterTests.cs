@@ -124,7 +124,7 @@ public class AnyOfJsonConverterTests
     }
 
     [Fact]
-    public void Deserialize_Issue17_V1()
+    public void Deserialize_Issue17()
     {
         // Arrange
         var expected = new ATest

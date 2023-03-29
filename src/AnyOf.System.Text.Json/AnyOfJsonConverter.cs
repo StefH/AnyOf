@@ -6,9 +6,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AnyOfTypes.System.Text.Json.Extensions;
 using AnyOfTypes.System.Text.Json.Matcher;
-using AnyOfTypes.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Models;
 using Nelibur.ObjectMapper;
-using System.Diagnostics.CodeAnalysis;
 
 namespace AnyOfTypes.System.Text.Json;
 
@@ -34,11 +33,7 @@ public class AnyOfJsonConverter : JsonConverter<object?>
                 break;
 
             case JsonValueKind.Object:
-                if (!TryFindBestObjectMatch(jsonElement, typeToConvert?.GetGenericArguments() ?? Type.EmptyTypes, options, out value))
-                {
-                    value = ToObject(jsonElement, typeof(object), options);
-                }
-                //value = FindBestObjectMatch(jsonElement, typeToConvert?.GetGenericArguments() ?? Type.EmptyTypes, options);
+                value = FindBestObjectMatch(jsonElement, typeToConvert?.GetGenericArguments() ?? Type.EmptyTypes, options);
                 break;
 
             default:
@@ -122,11 +117,7 @@ public class AnyOfJsonConverter : JsonConverter<object?>
             object? value;
             if (arrayElement.ValueKind == JsonValueKind.Object)
             {
-                if (!TryFindBestObjectMatch(arrayElement, types, options, out value))
-                {
-                    value = ToObject(arrayElement, typeof(object), options);
-                }
-                //value = FindBestObjectMatch(arrayElement, types, options);
+                value = FindBestObjectMatch(arrayElement, types, options);
             }
             else
             {
@@ -160,7 +151,7 @@ public class AnyOfJsonConverter : JsonConverter<object?>
         return null;
     }
 
-    private bool TryFindBestObjectMatch(JsonElement objectElement, Type[] types, JsonSerializerOptions options, [NotNullWhen(true)] out object? value)
+    private object? FindBestObjectMatch(JsonElement objectElement, Type[] types, JsonSerializerOptions options)
     {
         var properties = new List<PropertyDetails>();
         foreach (var element in objectElement.EnumerateObject())
@@ -177,11 +168,7 @@ public class AnyOfJsonConverter : JsonConverter<object?>
             switch (element.Value.ValueKind)
             {
                 case JsonValueKind.Object:
-                    if (!TryFindBestObjectMatch(element.Value, types, options, out val))
-                    {
-                        val = ToObject(element.Value, typeof(object), options);
-                    }
-                    
+                    val = FindBestObjectMatch(element.Value, types, options);
                     break;
 
                 default:
@@ -198,12 +185,11 @@ public class AnyOfJsonConverter : JsonConverter<object?>
         var mostSuitableType = MatchFinder.FindBestType(_ignoreCase, properties, types);
         if (mostSuitableType is not null)
         {
-            value = ToObject(objectElement, mostSuitableType, options);
-            return true;
+            return ToObject(objectElement, mostSuitableType, options);
         }
 
-        value = default;
-        return false; //throw new JsonException("No suitable type found.");
+        // Just return object
+        return ToObject(objectElement, typeof(object), options);
     }
 
     public override void Write(Utf8JsonWriter writer, object? value, JsonSerializerOptions options)
@@ -234,7 +220,7 @@ public class AnyOfJsonConverter : JsonConverter<object?>
     /// - https://stackoverflow.com/questions/58138793/system-text-json-jsonelement-toobject-workaround
     /// - https://stackoverflow.com/a/58193164/255966
     /// </summary>
-    private static object ToObject(JsonElement element, Type returnType, JsonSerializerOptions? options = null)
+    private static object? ToObject(JsonElement element, Type returnType, JsonSerializerOptions? options = null)
     {
         var json = element.GetRawText();
         return JsonSerializer.Deserialize(json, returnType, options);

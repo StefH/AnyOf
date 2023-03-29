@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Title>AnyOf.System.Text.Json</Title>
-    <TargetFrameworks>netstandard2.0;net50;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
     <ProjectGuid>{41D0104F-3E63-4223-A4AD-372E68A6B0CB}</ProjectGuid>
     <Description>Contains an AnyOfJsonConverter which can be used to serialize and deserialize an AnyOf&lt;TFirst, TSecond, ...&gt; type.</Description>
     <PackageTags>AnyOf;types;AnyOfJsonConverter;JsonConverter;json</PackageTags>
@@ -14,10 +14,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-    <PackageReference Include="Nullable" Version="1.3.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="System.Text.Json" Version="4.6.0" />
     <PackageReference Include="TinyMapper" Version="3.0.3" />
   </ItemGroup>
