@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace AnyOfTypes
 {
     [DebuggerDisplay("{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
-    public struct AnyOf<TFirst, TSecond>
+    public struct AnyOf<TFirst, TSecond> : IEquatable<AnyOf<TFirst, TSecond>>
     {
         private readonly string _thisType => $"AnyOf<{typeof(TFirst).Name}, {typeof(TSecond).Name}>";
         private readonly int _numberOfTypes;
@@ -25,8 +25,8 @@ namespace AnyOfTypes
         private readonly TFirst _first;
         private readonly TSecond _second;
 
-        public readonly AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second };
-        public readonly Type[] Types => new [] { typeof(TFirst), typeof(TSecond) };
+        public readonly AnyOfType[] AnyOfTypes => new[] { AnyOfType.First, AnyOfType.Second };
+        public readonly Type[] Types => new[] { typeof(TFirst), typeof(TSecond) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
@@ -124,23 +124,23 @@ namespace AnyOfTypes
             return HashCodeCalculator.GetHashCode(fields);
         }
 
-        private bool Equals(AnyOf<TFirst, TSecond> other)
+        public bool Equals(AnyOf<TFirst, TSecond> other)
         {
             return _currentType == other._currentType &&
                    _numberOfTypes == other._numberOfTypes &&
                    EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&
-            EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
-            EqualityComparer<TSecond>.Default.Equals(_second, other._second);
+                    EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
+                    EqualityComparer<TSecond>.Default.Equals(_second, other._second);
         }
 
         public static bool operator ==(AnyOf<TFirst, TSecond> obj1, AnyOf<TFirst, TSecond> obj2)
         {
-            return obj1.Equals(obj2);
+            return EqualityComparer<AnyOf<TFirst, TSecond>>.Default.Equals(obj1, obj2);
         }
 
         public static bool operator !=(AnyOf<TFirst, TSecond> obj1, AnyOf<TFirst, TSecond> obj2)
         {
-            return !obj1.Equals(obj2);
+            return !(obj1 == obj2);
         }
 
         public override bool Equals(object obj)

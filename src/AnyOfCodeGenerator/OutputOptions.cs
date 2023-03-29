@@ -1,11 +1,10 @@
-﻿namespace AnyOf.SourceGenerator
+﻿namespace AnyOf.SourceGenerator;
+
+public class OutputOptions
 {
-    public class OutputOptions
-    {
-        public OutputType Type { get; set; } = OutputType.Context;
+    public OutputType Type { get; set; } = OutputType.Context;
 
-        public bool SupportsNullable { get; set; } = true;
+    public bool SupportsNullable { get; set; } = true;
 
-        public string Folder { get; set; }
-    }
+    public string Folder { get; set; } = null!;
 }

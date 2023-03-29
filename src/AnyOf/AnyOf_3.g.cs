@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace AnyOfTypes
 {
     [DebuggerDisplay("{_thisType}, AnyOfType = {_currentType}; Type = {_currentValueType?.Name}; Value = '{ToString()}'")]
-    public struct AnyOf<TFirst, TSecond, TThird>
+    public struct AnyOf<TFirst, TSecond, TThird> : IEquatable<AnyOf<TFirst, TSecond, TThird>>
     {
         private readonly string _thisType => $"AnyOf<{typeof(TFirst).Name}, {typeof(TSecond).Name}, {typeof(TThird).Name}>";
         private readonly int _numberOfTypes;
@@ -26,8 +26,8 @@ namespace AnyOfTypes
         private readonly TSecond _second;
         private readonly TThird _third;
 
-        public readonly AnyOfType[] AnyOfTypes => new [] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third };
-        public readonly Type[] Types => new [] { typeof(TFirst), typeof(TSecond), typeof(TThird) };
+        public readonly AnyOfType[] AnyOfTypes => new[] { AnyOfType.First, AnyOfType.Second, AnyOfType.Third };
+        public readonly Type[] Types => new[] { typeof(TFirst), typeof(TSecond), typeof(TThird) };
         public bool IsUndefined => _currentType == AnyOfType.Undefined;
         public bool IsFirst => _currentType == AnyOfType.First;
         public bool IsSecond => _currentType == AnyOfType.Second;
@@ -154,24 +154,24 @@ namespace AnyOfTypes
             return HashCodeCalculator.GetHashCode(fields);
         }
 
-        private bool Equals(AnyOf<TFirst, TSecond, TThird> other)
+        public bool Equals(AnyOf<TFirst, TSecond, TThird> other)
         {
             return _currentType == other._currentType &&
                    _numberOfTypes == other._numberOfTypes &&
                    EqualityComparer<object>.Default.Equals(_currentValue, other._currentValue) &&
-            EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
-            EqualityComparer<TSecond>.Default.Equals(_second, other._second) &&
-            EqualityComparer<TThird>.Default.Equals(_third, other._third);
+                    EqualityComparer<TFirst>.Default.Equals(_first, other._first) &&
+                    EqualityComparer<TSecond>.Default.Equals(_second, other._second) &&
+                    EqualityComparer<TThird>.Default.Equals(_third, other._third);
         }
 
         public static bool operator ==(AnyOf<TFirst, TSecond, TThird> obj1, AnyOf<TFirst, TSecond, TThird> obj2)
         {
-            return obj1.Equals(obj2);
+            return EqualityComparer<AnyOf<TFirst, TSecond, TThird>>.Default.Equals(obj1, obj2);
         }
 
         public static bool operator !=(AnyOf<TFirst, TSecond, TThird> obj1, AnyOf<TFirst, TSecond, TThird> obj2)
         {
-            return !obj1.Equals(obj2);
+            return !(obj1 == obj2);
         }
 
         public override bool Equals(object obj)
