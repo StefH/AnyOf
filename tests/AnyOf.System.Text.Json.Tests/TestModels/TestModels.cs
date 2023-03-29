@@ -47,4 +47,21 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
     {
         public string Guid { get; set; }
     }
+
+    public class SampleSubClassTest
+    {
+        public string SampleProperty { get; set; }
+    }
+
+    class ATest
+    {
+        public SampleSubClassTest SubClass { get; set; }
+
+        public string StringValue { get; set; }
+    }
+
+    class BTest
+    {
+        public string Value { get; set; }
+    }
 }
