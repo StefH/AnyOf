@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using AnyOfTypes.System.Text.Json.Extensions;
 using AnyOfTypes.System.Text.Json.Matcher;
-using AnyOfTypes.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Models;
 using Nelibur.ObjectMapper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -187,10 +187,8 @@ public class AnyOfJsonConverter : JsonConverter
         {
             var target = Activator.CreateInstance(bestType);
 
-            using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
-            {
-                serializer.Populate(jObjectReader, target);
-            }
+            using JsonReader jObjectReader = CopyReaderForObject(reader, jObject);
+            serializer.Populate(jObjectReader, target);
 
             return target;
         }
@@ -200,7 +198,7 @@ public class AnyOfJsonConverter : JsonConverter
 
     public override bool CanConvert(Type objectType)
     {
-        return objectType.FullName.StartsWith("AnyOfTypes.AnyOf`");
+        return objectType.FullName?.StartsWith("AnyOfTypes.AnyOf`") == true;
     }
 
     private static JsonReader CopyReaderForObject(JsonReader reader, JObject jObject)
