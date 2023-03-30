@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Class1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\AnyOf.System.Text.Json.Tests\TestModels\TestModels.cs" Link="TestModels\TestModels.cs" />
   </ItemGroup>
 

@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using AnyOfTypes.System.Text.Json.Matcher.Models;
+using AnyOfTypes.System.Text.Json.Models;
 
 namespace AnyOfTypes.System.Text.Json.Extensions;
 
 internal static class ReflectionHelpers
 {
     [ThreadStatic]
-    static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new Dictionary<KeyValuePair<Type, Type>, bool>();
+    private static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new();
 
     public static T GetPropertyValue<T>(this object instance, string name)
     {
@@ -94,7 +94,7 @@ internal static class ReflectionHelpers
         try
         {
             var val = Activator.CreateInstance(from);
-            Convert.ChangeType(val, to);
+            _ = Convert.ChangeType(val, to);
             changeType = true;
         }
         catch
