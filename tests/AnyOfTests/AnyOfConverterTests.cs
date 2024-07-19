@@ -53,7 +53,22 @@ public class AnyOfConverterTests
         var converter = new AnyOfConverter<string, int>();
 
         // Act
-        var result = (AnyOf<string, int>)converter.ConvertFrom(_typeDescriptorContext, null!, value);
+        var result = (AnyOf<string, int>)converter.ConvertFrom(_typeDescriptorContext, null!, value)!;
+
+        // Assert
+        result.CurrentValue.Should().Be(expectedValue);
+    }
+
+    [Theory]
+    [InlineData(42, 42)]
+    [InlineData("foo", "foo")]
+    public void ConvertFrom_UsingTypeDescriptor_ShouldReturnExpectedValue(object value, object expectedValue)
+    {
+        // Arrange
+        var converter = TypeDescriptor.GetConverter(typeof(AnyOfConverter<string, int>));
+
+        // Act
+        var result = (AnyOf<string, int>)converter.ConvertFrom(_typeDescriptorContext, null!, value)!;
 
         // Assert
         result.CurrentValue.Should().Be(expectedValue);
