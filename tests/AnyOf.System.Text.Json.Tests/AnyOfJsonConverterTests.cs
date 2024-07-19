@@ -1,243 +1,270 @@
 using System.Collections.Generic;
 using System.Text.Json;
 using AnyOf.System.Text.Json.Tests.TestModels;
+using AnyOfTypes;
 using AnyOfTypes.System.Text.Json;
 using FluentAssertions;
 using Xunit;
 
-namespace AnyOf.System.Text.Json.Tests
+namespace AnyOf.System.Text.Json.Tests;
+
+public class AnyOfJsonConverterTests
 {
-    public class AnyOfJsonConverterTests
+    [Fact]
+    public void Serialize_AnyOf_With_SimpleTypes()
     {
-        [Fact]
-        public void Serialize_AnyOf_With_SimpleTypes()
+        // Arrange
+        var test = new TestSimpleTypes
         {
-            // Arrange
-            var test = new TestSimpleTypes
-            {
-                IntOrString = 1
-            };
+            IntOrString = 1
+        };
 
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var json = JsonSerializer.Serialize(test, options);
-
-            // Assert
-            json.Should().Be("{\"IntOrString\":1}");
-        }
-
-        [Fact]
-        public void Serialize_AnyOf_With_ComplexTypes()
+        // Act
+        var options = new JsonSerializerOptions
         {
-            // Arrange
-            var test = new TestComplexTypes
-            {
-                AorB = new A
-                {
-                    Id = 1
-                }
-            };
+            WriteIndented = false
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
 
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
+        var json = JsonSerializer.Serialize(test, options);
 
-            var json = JsonSerializer.Serialize(test, options);
+        // Assert
+        json.Should().Be("{\"IntOrString\":1}");
+    }
 
-            // Assert
-            json.Should().Be("{\"AorB\":{\"Id\":1}}");
-        }
-
-        [Fact]
-        public void Serialize_AnyOf_With_MixedTypes()
+    [Fact]
+    public void Serialize_AnyOf_With_ComplexTypes()
+    {
+        // Arrange
+        var test = new TestComplexTypes
         {
-            // Arrange
-            var test = new TestMixedTypes
-            {
-                IntOrStringOrAOrB = 1
-            };
-
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var json = JsonSerializer.Serialize(test, options);
-
-            // Assert
-            json.Should().Be("{\"IntOrStringOrAOrB\":1}");
-        }
-
-        [Fact]
-        public void Serialize_AnyOf_With_IntArray()
-        {
-            // Arrange
-            var test = new TestComplexArray
-            {
-                X = new int[] { 42 }
-            };
-
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var json = JsonSerializer.Serialize(test, options);
-
-            // Assert
-            json.Should().Be("{\"X\":[42]}");
-        }
-
-        [Fact]
-        public void Serialize_AnyOf_With_ObjectList()
-        {
-            // Arrange
-            var test = new TestComplexArray
-            {
-                X = new List<A> { new A { Id = 1 }, new A { Id = 2 } }
-            };
-
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var json = JsonSerializer.Serialize(test, options);
-
-            // Assert
-            json.Should().Be("{\"X\":[{\"Id\":1},{\"Id\":2}]}");
-        }
-
-        [Fact]
-        public void Deserialize_AnyOf_With_SimpleTypes()
-        {
-            // Arrange
-            var expected = new TestSimpleTypes
-            {
-                IntOrString = 1
-            };
-
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1}", options);
-
-            // Assert
-            result.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void Deserialize_AnyOf_With_ComplexTypes()
-        {
-            // Arrange
-            var expected = new A
+            AorB = new A
             {
                 Id = 1
-            };
+            }
+        };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
-
-            // Assert
-            result.AorB.First.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void Deserialize_AnyOf_With_ComplexTypes_DifferentCasing()
+        // Act
+        var options = new JsonSerializerOptions
         {
-            // Arrange
-            var expected = new A2
+            WriteIndented = false
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = JsonSerializer.Serialize(test, options);
+
+        // Assert
+        json.Should().Be("{\"AorB\":{\"Id\":1}}");
+    }
+
+    [Fact]
+    public void Serialize_AnyOf_With_MixedTypes()
+    {
+        // Arrange
+        var test = new TestMixedTypes
+        {
+            IntOrStringOrAOrB = 1
+        };
+
+        // Act
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = JsonSerializer.Serialize(test, options);
+
+        // Assert
+        json.Should().Be("{\"IntOrStringOrAOrB\":1}");
+    }
+
+    [Fact]
+    public void Serialize_AnyOf_With_IntArray()
+    {
+        // Arrange
+        var test = new TestComplexArray
+        {
+            X = new int[] { 42 }
+        };
+
+        // Act
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = JsonSerializer.Serialize(test, options);
+
+        // Assert
+        json.Should().Be("{\"X\":[42]}");
+    }
+
+    [Fact]
+    public void Serialize_AnyOf_With_ObjectList()
+    {
+        // Arrange
+        var test = new TestComplexArray
+        {
+            X = new List<A> { new A { Id = 1 }, new A { Id = 2 } }
+        };
+
+        // Act
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = false
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = JsonSerializer.Serialize(test, options);
+
+        // Assert
+        json.Should().Be("{\"X\":[{\"Id\":1},{\"Id\":2}]}");
+    }
+
+    [Fact]
+    public void Deserialize_Issue17()
+    {
+        // Arrange
+        var expected = new ATest
+        {
+            StringValue = "1",
+            SubClass = new SampleSubClassTest
             {
-                id = 1
-            };
+                SampleProperty = "Abc"
+            }
+        };
 
-            // Act
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-            options.Converters.Add(new AnyOfJsonConverter());
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
+        options.PropertyNameCaseInsensitive = true;
 
-            var result = JsonSerializer.Deserialize<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options);
+        var json = "{\"StringValue\": \"1\",\"SubClass\": {\"SampleProperty\": \"Abc\"}}";
 
-            // Assert
-            result.AorB.First.Should().BeEquivalentTo(expected);
-        }
+        // Act
+        var result = JsonSerializer.Deserialize<AnyOf<ATest, BTest>>(json, options);
 
-        [Fact]
-        public void Deserialize_AnyOf_With_MixedTypes()
+        // Assert
+        result.First.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_SimpleTypes()
+    {
+        // Arrange
+        var expected = new TestSimpleTypes
         {
-            // Arrange
-            var expected = new TestMixedTypes
-            {
-                IntOrStringOrAOrB = 1
-            };
+            IntOrString = 1
+        };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);
+        var result = JsonSerializer.Deserialize<TestSimpleTypes>("{\"IntOrString\":1}", options);
 
-            // Assert
-            result.Should().BeEquivalentTo(expected);
-        }
+        // Assert
+        result.Should().BeEquivalentTo(expected);
+    }
 
-        [Fact]
-        public void Deserialize_AnyOf_With_IntArray()
+    [Fact]
+    public void Deserialize_AnyOf_With_ComplexTypes()
+    {
+        // Arrange
+        var expected = new A
         {
-            // Arrange
-            var expected = new int[] { 42 };
+            Id = 1
+        };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
+        var result = JsonSerializer.Deserialize<TestComplexTypes>("{\"AorB\":{\"Id\":1}}", options);
 
-            // Assert
-            result.X.First.Should().BeEquivalentTo(expected);
-        }
+        // Assert
+        result.AorB.First.Should().BeEquivalentTo(expected);
+    }
 
-        [Fact]
-        public void Deserialize_AnyOf_With_StringList()
+    [Fact]
+    public void Deserialize_AnyOf_With_ComplexTypes_DifferentCasing()
+    {
+        // Arrange
+        var expected = new A2
         {
-            // Arrange
-            var expected = new[] { "a", "b" };
+            id = 1
+        };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
-
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
-
-            // Assert
-            result.X.Second.Should().BeEquivalentTo(expected);
-        }
-
-        [Fact]
-        public void Deserialize_AnyOf_With_ObjectList_A()
+        // Act
+        var options = new JsonSerializerOptions
         {
-            // Arrange
-            var expected = new List<A>
+            PropertyNameCaseInsensitive = true
+        };
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var result = JsonSerializer.Deserialize<TestComplexTypes2>("{\"AorB\":{\"Id\":1}}", options);
+
+        // Assert
+        result.AorB.First.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_MixedTypes()
+    {
+        // Arrange
+        var expected = new TestMixedTypes
+        {
+            IntOrStringOrAOrB = 1
+        };
+
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var result = JsonSerializer.Deserialize<TestMixedTypes>("{\"IntOrStringOrAOrB\":1}", options);
+
+        // Assert
+        result.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_IntArray()
+    {
+        // Arrange
+        var expected = new int[] { 42 };
+
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[42]}", options);
+
+        // Assert
+        result.X.First.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_StringList()
+    {
+        // Arrange
+        var expected = new[] { "a", "b" };
+
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[\"a\", \"b\"]}", options);
+
+        // Assert
+        result.X.Second.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_ObjectList_A()
+    {
+        // Arrange
+        var expected = new List<A>
             {
                 new A
                 {
@@ -249,21 +276,21 @@ namespace AnyOf.System.Text.Json.Tests
                 }
             };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options);
+        var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Id\":1},{\"Id\":2}]}", options);
 
-            // Assert
-            result.X.Third.Should().BeEquivalentTo(expected);
-        }
+        // Assert
+        result.X.Third.Should().BeEquivalentTo(expected);
+    }
 
-        [Fact]
-        public void Deserialize_AnyOf_With_ObjectList_B()
-        {
-            // Arrange
-            var expected = new List<B>
+    [Fact]
+    public void Deserialize_AnyOf_With_ObjectList_B()
+    {
+        // Arrange
+        var expected = new List<B>
             {
                 new B
                 {
@@ -275,14 +302,13 @@ namespace AnyOf.System.Text.Json.Tests
                 }
             };
 
-            // Act
-            var options = new JsonSerializerOptions();
-            options.Converters.Add(new AnyOfJsonConverter());
+        // Act
+        var options = new JsonSerializerOptions();
+        options.Converters.Add(new AnyOfJsonConverter());
 
-            var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Guid\":\"a\"},{\"Guid\":\"b\"}]}", options);
+        var result = JsonSerializer.Deserialize<TestComplexArray>("{\"X\":[{\"Guid\":\"a\"},{\"Guid\":\"b\"}]}", options);
 
-            // Assert
-            result.X.Fourth.Should().BeEquivalentTo(expected);
-        }
+        // Assert
+        result.X.Fourth.Should().BeEquivalentTo(expected);
     }
 }

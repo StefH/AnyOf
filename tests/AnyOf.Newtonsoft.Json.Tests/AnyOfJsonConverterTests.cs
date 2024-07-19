@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AnyOf.System.Text.Json.Tests.TestModels;
+using AnyOfTypes;
 using AnyOfTypes.Newtonsoft.Json;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -101,6 +102,31 @@ public class AnyOfJsonConverterTests
 
         // Assert
         json.Should().Be("{\"IntOrStringOrAOrB\":1}");
+    }
+
+    [Fact]
+    public void Deserialize_Issue17()
+    {
+        // Arrange
+        var expected = new ATest
+        {
+            StringValue = "1",
+            SubClass = new SampleSubClassTest
+            {
+                SampleProperty = "Abc"
+            }
+        };
+
+        var options = new JsonSerializerSettings();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = "{\"StringValue\": \"1\",\"SubClass\": {\"SampleProperty\": \"Abc\"}}";
+
+        // Act
+        var result = JsonConvert.DeserializeObject<AnyOf<ATest, BTest>>(json, options);
+
+        // Assert
+        result.First.Should().BeEquivalentTo(expected);
     }
 
     [Fact]

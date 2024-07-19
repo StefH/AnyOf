@@ -2,11 +2,13 @@
 
   <PropertyGroup>
     <Title>AnyOf.System.Text.Json</Title>
-    <TargetFrameworks>netstandard2.0;net50;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.1;net6.0;net7.0</TargetFrameworks>
     <ProjectGuid>{41D0104F-3E63-4223-A4AD-372E68A6B0CB}</ProjectGuid>
     <Description>Contains an AnyOfJsonConverter which can be used to serialize and deserialize an AnyOf&lt;TFirst, TSecond, ...&gt; type.</Description>
     <PackageTags>AnyOf;types;AnyOfJsonConverter;JsonConverter;json</PackageTags>
     <RootNamespace>AnyOfTypes.System.Text.Json</RootNamespace>
+    <LangVersion>11</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
