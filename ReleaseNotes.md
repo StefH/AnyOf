@@ -1,3 +1,9 @@
+# 0.4.0 (19 July 2024)
+- [#16](https://github.com/StefH/AnyOf/pull/16) - [Snyk] Security upgrade Newtonsoft.Json from 9.0.1 to 13.0.1 contributed by [snyk-bot](https://github.com/snyk-bot)
+- [#18](https://github.com/StefH/AnyOf/pull/18) - Add IEquatable [enhancement] contributed by [StefH](https://github.com/StefH)
+- [#21](https://github.com/StefH/AnyOf/pull/21) - Disable CS1591 warnings for all generated files [enhancement] contributed by [mthierba](https://github.com/mthierba)
+- [#17](https://github.com/StefH/AnyOf/issues/17) - Issues with matching types on nested objects [bug]
+
 # 0.3.0 (21 January 2022)
 - [#15](https://github.com/StefH/AnyOf/pull/15) - AnyOf.*.Json: Add support for CaseIgnore for property match [enhancement] contributed by [StefH](https://github.com/StefH)
 

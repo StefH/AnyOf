@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+#pragma warning disable CS1591
+
 using System;
 using System.Diagnostics;
 using System.Collections.Generic;

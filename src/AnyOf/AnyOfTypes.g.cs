@@ -7,6 +7,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+#pragma warning disable CS1591
+
 namespace AnyOfTypes
 {
     public enum AnyOfType
