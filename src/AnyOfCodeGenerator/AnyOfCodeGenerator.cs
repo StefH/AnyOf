@@ -397,6 +397,8 @@ public class AnyOfCodeGenerator : ISourceGenerator
         sb.AppendLine("// </auto-generated>");
         sb.AppendLine("//------------------------------------------------------------------------------");
         sb.AppendLine();
+        sb.AppendLine("#pragma warning disable CS1591");
+        sb.AppendLine();
         return sb;
     }
 }
