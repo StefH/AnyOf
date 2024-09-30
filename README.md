@@ -10,22 +10,22 @@ This project uses code generation to generate up to 10 AnyOf-types:
 
 # Install
 ## The normal version:
-[![NuGet Badge](https://buildstats.info/nuget/AnyOf)](https://www.nuget.org/packages/AnyOf)
+[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf)](https://www.nuget.org/packages/AnyOf)
 
 ## The source-generator version:
-[![NuGet Badge](https://buildstats.info/nuget/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
+[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
 
 ## AnyOf.Newtonsoft.Json
 This package can be used to serialize/deserialize (with Newtonsoft.Json) an object which contains an AnyOf-type.<br>
 For more details see [wiki : AnyOf.Newtonsoft.Json](https://github.com/StefH/AnyOf/wiki/AnyOf.Newtonsoft.Json)
 
-[![NuGet Badge](https://buildstats.info/nuget/AnyOf.Newtonsoft.Json)](https://www.nuget.org/packages/AnyOf.Newtonsoft.Json)
+[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.Newtonsoft.Json)](https://www.nuget.org/packages/AnyOf.Newtonsoft.Json)
 
 ## AnyOf.System.Text.Json
 This package can be used to serialize/deserialize (with System.Text.Json) an object which contains an AnyOf-type.<br>
 For more details see [wiki : AnyOf.System.Text.Json](https://github.com/StefH/AnyOf/wiki/AnyOf.System.Text.Json)
 
-[![NuGet Badge](https://buildstats.info/nuget/AnyOf.System.Text.Json)](https://www.nuget.org/packages/AnyOf.System.Text.Json)
+[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.System.Text.Json)](https://www.nuget.org/packages/AnyOf.System.Text.Json)
 
 # Usage
 ``` c#
