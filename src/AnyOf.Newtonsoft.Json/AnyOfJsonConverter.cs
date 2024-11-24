@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,16 +11,9 @@ using Newtonsoft.Json.Linq;
 
 namespace AnyOfTypes.Newtonsoft.Json;
 
-public class AnyOfJsonConverter : JsonConverter
+public class AnyOfJsonConverter(bool ignoreCase = true) : JsonConverter
 {
-    private readonly bool _ignoreCase;
-
-    public AnyOfJsonConverter(bool ignoreCase = true)
-    {
-        _ignoreCase = ignoreCase;
-    }
-
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
     {
         if (value is null)
         {
@@ -44,7 +36,7 @@ public class AnyOfJsonConverter : JsonConverter
     /// - https://stackoverflow.com/questions/8030538/how-to-implement-custom-jsonconverter-in-json-net
     /// - https://stackoverflow.com/a/59286262/255966
     /// </summary>
-    public override object? ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
         object? value;
         switch (reader.TokenType)
@@ -54,7 +46,7 @@ public class AnyOfJsonConverter : JsonConverter
                 break;
 
             case JsonToken.StartObject:
-                value = FindBestObjectMatch(reader, objectType?.GetGenericArguments() ?? new Type[0], serializer);
+                value = FindBestObjectMatch(reader, objectType.GetGenericArguments() ?? [], serializer);
                 break;
 
             case JsonToken.StartArray:
@@ -74,7 +66,7 @@ public class AnyOfJsonConverter : JsonConverter
         return Activator.CreateInstance(objectType, value);
     }
 
-    private static object? GetSimpleValue(JsonReader reader, object existingValue)
+    private static object? GetSimpleValue(JsonReader reader, object? existingValue)
     {
         var jValue = new JValue(reader.Value);
 
@@ -82,7 +74,7 @@ public class AnyOfJsonConverter : JsonConverter
         switch (reader.TokenType)
         {
             case JsonToken.String:
-                value = (string)jValue;
+                value = (string)jValue!;
                 break;
 
             case JsonToken.Date:
@@ -114,9 +106,9 @@ public class AnyOfJsonConverter : JsonConverter
         return value;
     }
 
-    private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object existingValue, JsonSerializer serializer)
+    private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object? existingValue, JsonSerializer serializer)
     {
-        var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => typeof(IEnumerable).IsAssignableFrom(t)).ToArray() ?? new Type[0];
+        var enumerableTypes = typeToConvert?.GetGenericArguments().Where(t => t.IsAssignableFromIEnumerable()).ToArray() ?? [];
         var elementTypes = enumerableTypes.Select(t => t.GetElementTypeX()).ToArray();
 
         var list = new List<object?>();
@@ -175,14 +167,14 @@ public class AnyOfJsonConverter : JsonConverter
                 Name = element.Key
             };
 
-            var val = element.Value.ToObject<object?>();
+            var val = element.Value!.ToObject<object?>();
             propertyDetails.PropertyType = val?.GetType();
             propertyDetails.IsValueType = val?.GetType().GetTypeInfo().IsValueType == true;
 
             properties.Add(propertyDetails);
         }
 
-        var bestType = MatchFinder.FindBestType(_ignoreCase, properties, types);
+        var bestType = MatchFinder.FindBestType(ignoreCase, properties, types);
         if (bestType is not null)
         {
             var target = Activator.CreateInstance(bestType);
@@ -200,7 +192,7 @@ public class AnyOfJsonConverter : JsonConverter
 
     public override bool CanConvert(Type objectType)
     {
-        return objectType.FullName.StartsWith("AnyOfTypes.AnyOf`");
+        return objectType.FullName?.StartsWith("AnyOfTypes.AnyOf`") == true;
     }
 
     private static JsonReader CopyReaderForObject(JsonReader reader, JObject jObject)

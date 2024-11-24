@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using AnyOfTypes;
 
 namespace AnyOf.System.Text.Json.Tests.TestModels
@@ -31,6 +32,12 @@ namespace AnyOf.System.Text.Json.Tests.TestModels
     public class TestComplexArray
     {
         public AnyOf<int[], List<string>, List<A>, IEnumerable<B>> X { get; set; }
+    }
+
+    public class TestStringOrStringArray
+    {
+        [JsonPropertyName("field")]
+        public AnyOf<string, List<string>> Field { get; set; }
     }
 
     public class A

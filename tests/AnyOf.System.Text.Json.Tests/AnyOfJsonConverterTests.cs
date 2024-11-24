@@ -234,6 +234,25 @@ namespace AnyOf.System.Text.Json.Tests
         }
 
         [Fact]
+        public void Deserialize_AnyOf_With_StringOrStringList()
+        {
+            // Arrange
+            var expected = new[] { "a", "b" };
+
+            // Act
+            var options = new JsonSerializerOptions
+            {
+                Converters = { new AnyOfJsonConverter() }
+            };
+
+            var json = "{ \"field\": [ \"a\", \"b\" ] }";
+            var result = JsonSerializer.Deserialize<TestStringOrStringArray>(json, options)!;
+
+            // Assert
+            result.Field.Second.Should().BeEquivalentTo(expected);
+        }
+
+        [Fact]
         public void Deserialize_AnyOf_With_ObjectList_A()
         {
             // Arrange
