@@ -1,3 +1,7 @@
+# 0.5.0 (24 November 2024)
+- [#23](https://github.com/StefH/AnyOf/pull/23) - Fix AnyOfJsonConverter (string and string list) [bug] contributed by [StefH](https://github.com/StefH)
+- [#22](https://github.com/StefH/AnyOf/issues/22) - Null pointer in AnyOfJsonConverter.cs [bug]
+
 # 0.4.0 (19 July 2024)
 - [#16](https://github.com/StefH/AnyOf/pull/16) - [Snyk] Security upgrade Newtonsoft.Json from 9.0.1 to 13.0.1 contributed by [snyk-bot](https://github.com/snyk-bot)
 - [#18](https://github.com/StefH/AnyOf/pull/18) - Add IEquatable [enhancement] contributed by [StefH](https://github.com/StefH)

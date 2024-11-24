@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>Stef Heyenrath</Authors>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
