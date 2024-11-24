@@ -10,7 +10,12 @@ namespace AnyOfTypes.System.Text.Json.Extensions;
 internal static class ReflectionHelpers
 {
     [ThreadStatic]
-    static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new Dictionary<KeyValuePair<Type, Type>, bool>();
+    private static readonly Dictionary<KeyValuePair<Type, Type>, bool> ImplicitCastCache = new();
+
+    internal static bool IsAssignableFromIEnumerable(this Type type)
+    {
+        return type != typeof(string) && typeof(IEnumerable).IsAssignableFrom(type);
+    }
 
     public static T GetPropertyValue<T>(this object instance, string name)
     {
@@ -43,7 +48,7 @@ internal static class ReflectionHelpers
     public static ListDetails CastToTypedList(this IList source, Type elementType)
     {
         var listType = typeof(List<>).MakeGenericType(elementType);
-        var list = (IList)Activator.CreateInstance(listType);
+        var list = (IList)Activator.CreateInstance(listType)!;
 
         foreach (var item in source)
         {
@@ -74,7 +79,7 @@ internal static class ReflectionHelpers
         }
 
         var key = new KeyValuePair<Type, Type>(from, to);
-        if (ImplicitCastCache.TryGetValue(key, out bool result))
+        if (ImplicitCastCache.TryGetValue(key, out var result))
         {
             return result;
         }
@@ -85,16 +90,16 @@ internal static class ReflectionHelpers
             return ImplicitCastCache[key] = true;
         }
 #endif
-        if (from.GetMethods(BindingFlags.Public | BindingFlags.Static).Any(m => m.ReturnType == to && (m.Name == "op_Implicit" || m.Name == "op_Explicit")))
+        if (from.GetMethods(BindingFlags.Public | BindingFlags.Static).Any(m => m.ReturnType == to && m.Name is "op_Implicit" or "op_Explicit"))
         {
             return ImplicitCastCache[key] = true;
         }
 
-        bool changeType = false;
+        var changeType = false;
         try
         {
             var val = Activator.CreateInstance(from);
-            Convert.ChangeType(val, to);
+            _ = Convert.ChangeType(val, to);
             changeType = true;
         }
         catch

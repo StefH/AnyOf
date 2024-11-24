@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text.Json;
 using AnyOf.System.Text.Json.Tests.TestModels;
 using AnyOfTypes.Newtonsoft.Json;
 using FluentAssertions;
@@ -209,6 +210,23 @@ public class AnyOfJsonConverterTests
 
         // Assert
         result.X.Second.Should().BeEquivalentTo(expected);
+    }
+
+    [Fact]
+    public void Deserialize_AnyOf_With_StringOrStringList()
+    {
+        // Arrange
+        var expected = new[] { "a", "b" };
+
+        // Act
+        var options = new JsonSerializerSettings();
+        options.Converters.Add(new AnyOfJsonConverter());
+
+        var json = "{ \"field\": [ \"a\", \"b\" ] }";
+        var result = JsonConvert.DeserializeObject<TestStringOrStringArray>(json, options)!;
+
+        // Assert
+        result.Field.Second.Should().BeEquivalentTo(expected);
     }
 
     [Fact]

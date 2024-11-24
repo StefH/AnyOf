@@ -10,10 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Class1.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Include="..\AnyOf.System.Text.Json\Extensions\ReflectionHelpers.cs" Link="Extensions\ReflectionHelpers.cs" />
     <Compile Include="..\AnyOf.System.Text.Json\Matcher\MatchFinder.cs" Link="Matcher\MatchFinder.cs" />
     <Compile Include="..\AnyOf.System.Text.Json\Models\ListDetails.cs" Link="Models\ListDetails.cs" />
@@ -22,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="TinyMapper" Version="3.0.3" />
   </ItemGroup>
 
