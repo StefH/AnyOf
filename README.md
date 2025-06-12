@@ -83,10 +83,10 @@ namespace ConsoleAppConsumer
 }
 ```
 
-## Sponsors
+### Sponsors
 
-[Entity Framework Extensions](https://entityframework-extensions.net/?utm_source=StefH&utm_medium=AnyOf) and [Dapper Plus](https://dapper-plus.net/?utm_source=StefH&utm_medium=[content_type]) are major sponsors and proud to contribute to the development of **AnyOf**, **AnyOf.Newtonsoft.Json** and **AnyOf.System.Text.Json**.
+[Entity Framework Extensions](https://entityframework-extensions.net/?utm_source=StefH&utm_medium=AnyOf) and [Dapper Plus](https://dapper-plus.net/?utm_source=StefH) are major sponsors and proud to contribute to the development of **AnyOf**, **AnyOf.Newtonsoft.Json** and **AnyOf.System.Text.Json**.
 
-[![Entity Framework Extensions](https://raw.githubusercontent.com/StefH/resources/main/sponsor/entity-framework-extensions-sponsor.webp)](https://entityframework-extensions.net/bulk-insert?utm_source=StefH&utm_medium=[content_type])
+[![Entity Framework Extensions](https://raw.githubusercontent.com/StefH/resources/main/sponsor/entity-framework-extensions-sponsor.png)](https://entityframework-extensions.net/bulk-insert?utm_source=StefH)
 
-[![Dapper Plus](https://raw.githubusercontent.com/StefH/resources/main/sponsor/dapper-plus-sponsor.webp)](https://dapper-plus.net/bulk-insert?utm_source=StefH&utm_medium=[content_type])
+[![Dapper Plus](https://raw.githubusercontent.com/StefH/resources/main/sponsor/dapper-plus-sponsor.png)](https://dapper-plus.net/bulk-insert?utm_source=StefH)
