@@ -1,4 +1,4 @@
-# AnyOf
+## AnyOf
 Use the `AnyOf<First, TSecond, ...>` type to handle multiple defined types as input parameters for methods.
 
 This project uses code generation to generate up to 10 AnyOf-types:
@@ -8,26 +8,7 @@ This project uses code generation to generate up to 10 AnyOf-types:
 - `AnyOf<TFirst, TSecond, TThird, TFourth>`
 - ...
 
-# Install
-## The normal version:
-[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf)](https://www.nuget.org/packages/AnyOf)
-
-## The source-generator version:
-[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.SourceGenerator)](https://www.nuget.org/packages/AnyOf.SourceGenerator)
-
-## AnyOf.Newtonsoft.Json
-This package can be used to serialize/deserialize (with Newtonsoft.Json) an object which contains an AnyOf-type.<br>
-For more details see [wiki : AnyOf.Newtonsoft.Json](https://github.com/StefH/AnyOf/wiki/AnyOf.Newtonsoft.Json)
-
-[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.Newtonsoft.Json)](https://www.nuget.org/packages/AnyOf.Newtonsoft.Json)
-
-## AnyOf.System.Text.Json
-This package can be used to serialize/deserialize (with System.Text.Json) an object which contains an AnyOf-type.<br>
-For more details see [wiki : AnyOf.System.Text.Json](https://github.com/StefH/AnyOf/wiki/AnyOf.System.Text.Json)
-
-[![NuGet Badge](https://img.shields.io/nuget/v/AnyOf.System.Text.Json)](https://www.nuget.org/packages/AnyOf.System.Text.Json)
-
-# Usage
+## Usage
 ``` c#
 using System;
 using AnyOfTypes;
@@ -83,7 +64,7 @@ namespace ConsoleAppConsumer
 }
 ```
 
-## Sponsors
+### Sponsors
 
 [Entity Framework Extensions](https://entityframework-extensions.net/?utm_source=StefH&utm_medium=AnyOf) and [Dapper Plus](https://dapper-plus.net/?utm_source=StefH&utm_medium=[content_type]) are major sponsors and proud to contribute to the development of **AnyOf**, **AnyOf.Newtonsoft.Json** and **AnyOf.System.Text.Json**.
 

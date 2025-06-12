@@ -38,25 +38,13 @@ public class AnyOfJsonConverter(bool ignoreCase = true) : JsonConverter
     /// </summary>
     public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        object? value;
-        switch (reader.TokenType)
+        var value = reader.TokenType switch
         {
-            case JsonToken.Null:
-                value = null;
-                break;
-
-            case JsonToken.StartObject:
-                value = FindBestObjectMatch(reader, objectType.GetGenericArguments() ?? [], serializer);
-                break;
-
-            case JsonToken.StartArray:
-                value = FindBestArrayMatch(reader, objectType, existingValue, serializer);
-                break;
-
-            default:
-                value = GetSimpleValue(reader, existingValue);
-                break;
-        }
+            JsonToken.Null => null,
+            JsonToken.StartObject => FindBestObjectMatch(reader, objectType.GetGenericArguments(), serializer),
+            JsonToken.StartArray => FindBestArrayMatch(reader, objectType, existingValue, serializer),
+            _ => GetSimpleValue(reader, existingValue)
+        };
 
         if (value is null)
         {
@@ -70,40 +58,17 @@ public class AnyOfJsonConverter(bool ignoreCase = true) : JsonConverter
     {
         var jValue = new JValue(reader.Value);
 
-        object? value;
-        switch (reader.TokenType)
+        var value = reader.TokenType switch
         {
-            case JsonToken.String:
-                value = (string)jValue!;
-                break;
+            JsonToken.String => (string)jValue!,
+            JsonToken.Date => (DateTime)jValue,
+            JsonToken.Boolean => (bool)jValue,
+            JsonToken.Integer => (int)jValue,
+            JsonToken.Float => (double)jValue,
+            _ => jValue.Value
+        };
 
-            case JsonToken.Date:
-                value = (DateTime)jValue;
-                break;
-
-            case JsonToken.Boolean:
-                value = (bool)jValue;
-                break;
-
-            case JsonToken.Integer:
-                value = (int)jValue;
-                break;
-
-            case JsonToken.Float:
-                value = (double)jValue;
-                break;
-
-            default:
-                value = jValue.Value;
-                break;
-        }
-
-        if (value is null)
-        {
-            return existingValue;
-        }
-
-        return value;
+        return value ?? existingValue;
     }
 
     private object? FindBestArrayMatch(JsonReader reader, Type? typeToConvert, object? existingValue, JsonSerializer serializer)
@@ -179,10 +144,8 @@ public class AnyOfJsonConverter(bool ignoreCase = true) : JsonConverter
         {
             var target = Activator.CreateInstance(bestType);
 
-            using (JsonReader jObjectReader = CopyReaderForObject(reader, jObject))
-            {
-                serializer.Populate(jObjectReader, target);
-            }
+            using var jObjectReader = CopyReaderForObject(reader, jObject);
+            serializer.Populate(jObjectReader, target);
 
             return target;
         }

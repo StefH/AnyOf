@@ -145,17 +145,11 @@ public class AnyOfJsonConverter(bool ignoreCase = true) : JsonConverter<object?>
                 Name = element.Name
             };
 
-            object? val;
-            switch (element.Value.ValueKind)
+            var val = element.Value.ValueKind switch
             {
-                case JsonValueKind.Object:
-                    val = FindBestObjectMatch(element.Value, types, options);
-                    break;
-
-                default:
-                    val = GetSimpleValue(element.Value);
-                    break;
-            }
+                JsonValueKind.Object => FindBestObjectMatch(element.Value, types, options),
+                _ => GetSimpleValue(element.Value)
+            };
 
             propertyDetails.PropertyType = val?.GetType();
             propertyDetails.IsValueType = val?.GetType().IsValueType == true;
