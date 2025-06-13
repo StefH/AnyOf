@@ -4,7 +4,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.5.0</Version>
+    <Version>0.5.0.1</Version>
     <Authors>Stef Heyenrath</Authors>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
@@ -16,9 +16,14 @@
     <PackageProjectUrl>https://github.com/StefH/AnyOf</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/StefH/AnyOf</RepositoryUrl>
+    <PackageReadmeFile>PackageReadme.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../PackageReadme.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 </Project>
